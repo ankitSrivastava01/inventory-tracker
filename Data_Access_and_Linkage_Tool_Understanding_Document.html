@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Data Access and Linkage Tool Understanding Document</title>
+    <style>
+      :root {
+        color: #1f2937;
+        background: #f8fafc;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      body {
+        margin: 0;
+      }
+      main {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 48px 28px 72px;
+      }
+      h1,
+      h2,
+      h3 {
+        color: #4b5563;
+        letter-spacing: 0;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 42px;
+      }
+      h2 {
+        margin-top: 34px;
+        padding-top: 18px;
+        border-top: 1px solid #d8e4e9;
+        font-size: 27px;
+      }
+      h3 {
+        margin-top: 24px;
+        font-size: 21px;
+      }
+      p,
+      li {
+        color: #475569;
+        font-size: 16px;
+        line-height: 1.62;
+      }
+      .meta {
+        color: #64748b;
+        font-weight: 700;
+      }
+      .hero,
+      .panel {
+        background: #ffffff;
+        border: 1px solid #d8e4e9;
+        border-radius: 8px;
+        box-shadow: 0 12px 30px rgba(31, 41, 55, 0.07);
+      }
+      .hero {
+        padding: 28px;
+      }
+      .panel {
+        margin: 18px 0;
+        padding: 22px;
+      }
+      img.workflow {
+        display: block;
+        width: 100%;
+        height: auto;
+        margin: 18px 0;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        background: #ffffff;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0 24px;
+        overflow: hidden;
+        border: 1px solid #d8e4e9;
+        border-radius: 8px;
+        background: #ffffff;
+      }
+      th,
+      td {
+        padding: 13px 14px;
+        border-bottom: 1px solid #e2e8f0;
+        text-align: left;
+        vertical-align: top;
+        font-size: 15px;
+        line-height: 1.45;
+      }
+      th {
+        color: #334155;
+        background: #eef6f3;
+      }
+      td {
+        color: #475569;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+      @media (max-width: 760px) {
+        main {
+          padding: 28px 16px 48px;
+        }
+        h1 {
+          font-size: 32px;
+        }
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <p class="meta">Version 1.0 | July 17, 2026</p>
+        <h1>Data Access and Linkage Tool Understanding Document</h1>
+        <p>
+          A client-friendly explanation of the workflow, approach, roles, and linkage methods used by the Data Access and Linkage Tool, with public state statistical linkage as the main requirement.
+        </p>
+      </section>
+
+      <h2>Purpose</h2>
+      <p>
+        The Data Access and Linkage Tool supports state dataset linkage between Developer / BrightQuery users and State Owners.
+        Public/non-restricted statistical linkage is the main path. Developers submit requests, select linkage methods,
+        add Git code links, and run user-side linkage. State Owners review and approve when governance
+        or restricted data sensitivity requires it.
+      </p>
+
+      <h2>Workflow Image</h2>
+      <img class="workflow" src="State_Data_Access_Portal_Workflow.svg" alt="Data Access and Linkage Tool workflow" />
+
+      <h2>High-Level Workflow</h2>
+      <ol>
+        <li>Developer logs in as Developer / BrightQuery.</li>
+        <li>Developer selects datasets and chooses the requested linkage method.</li>
+        <li>Developer submits a PySyft-style request with data asset, code asset, execution context, output policy, review notes, and Git code link.</li>
+        <li>Developer can use the Linkage tab to run user-side linkage for selected datasets and methods.</li>
+        <li>State Owner logs in as State Owner.</li>
+        <li>State Owner reviews the PySyft-style request packet, code package, and linkage method.</li>
+        <li>State Owner approves, asks for changes, or rejects the request.</li>
+        <li>State Owner can run controlled linkage from the Linkage tab.</li>
+        <li>Outputs are reviewed for disclosure risk.</li>
+        <li>Linkage output remains in the separate Linkage tab; request approval remains a separate status and decision flow.</li>
+      </ol>
+
+      <h2>Overall Approach</h2>
+      <div class="grid">
+        <section class="panel">
+          <h3>Role Layer</h3>
+        <p>Developer / BrightQuery submits requests and views outputs. State Owner reviews requests and approves governed execution when policy or sensitivity requires it.</p>
+        </section>
+        <section class="panel">
+          <h3>Dataset Classification Layer</h3>
+        <p>Public/non-restricted data uses direct shared keys. Restricted data can use privacy-preserving linkage when needed. Mixed data uses the least sensitive safe route.</p>
+        </section>
+        <section class="panel">
+          <h3>Linkage Method Layer</h3>
+        <p>Direct public linkage is the default method. PySyft governance and PPRL/PPRS encryption are optional controls for sensitive cases.</p>
+        </section>
+        <section class="panel">
+          <h3>Governance And Release Layer</h3>
+        <p>Requests capture the PySyft-style request packet: data asset, code asset, execution context, output policy, and review notes. State Owner approval controls governed execution and restricted release.</p>
+        </section>
+      </div>
+
+      <h2>PySyft-Style Architecture</h2>
+      <p>
+        The app can reflect a PySyft-style code-to-data model when governance is required. Public statistical data can link directly;
+        restricted data can use PySyft review and PPRL/PPRS-style encrypted matching so raw restricted data stays inside the owner-controlled environment.
+      </p>
+
+      <h2>All Linkage Methods</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Linkage Method</th>
+            <th>What It Does</th>
+            <th>Best Fit</th>
+            <th>Privacy Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Direct public key linkage</td>
+            <td>Joins public datasets using shared fields such as SOC, CIP, county, state, year, or program.</td>
+            <td>Public statistical data.</td>
+            <td>No encryption needed when data is public and approved for direct matching.</td>
+          </tr>
+          <tr>
+            <td>LLM-assisted linkage</td>
+            <td>Uses AI to review metadata and recommend keys, blocking fields, risks, and output structure.</td>
+            <td>Unfamiliar schemas or early planning.</td>
+            <td>Only metadata should be sent. Raw private rows and PII should not be sent.</td>
+          </tr>
+          <tr>
+            <td>PPRL/PPRS Bloom filter / hash embeddings</td>
+            <td>Encodes identifiers into privacy-preserving comparison structures before matching.</td>
+            <td>Optional restricted person-level linkage where fuzzy comparison is needed.</td>
+            <td>Raw identifiers should remain protected; encoded tokens are compared instead.</td>
+          </tr>
+          <tr>
+            <td>PPRL/PPRS salted hash + q-grams</td>
+            <td>Uses salted hashes and q-gram tokenization for approximate matching.</td>
+            <td>Optional restricted linkage with spelling differences, partial matches, or data quality issues.</td>
+            <td>Salt and tokenization rules should be owner-controlled.</td>
+          </tr>
+          <tr>
+            <td>Secure Multi-Party Computation (SMC)</td>
+            <td>Allows parties to jointly evaluate matching logic without exposing private inputs.</td>
+            <td>High-assurance multi-agency linkage.</td>
+            <td>Strong privacy model, but more complex to implement and operate.</td>
+          </tr>
+          <tr>
+            <td>Linkage Honest Broker (LHB)</td>
+            <td>A trusted neutral party receives approved tokens and returns cross-reference IDs.</td>
+            <td>Programs where a centralized trusted linkage agent is acceptable.</td>
+            <td>Broker governance, contracts, and audit rules are important.</td>
+          </tr>
+          <tr>
+            <td>Asymmetric key cryptography</td>
+            <td>Uses public/private key pairs so parties do not need one shared secret.</td>
+            <td>Multi-party settings where each site needs local key control.</td>
+            <td>Useful when key ownership and rotation must be separated by party.</td>
+          </tr>
+          <tr>
+            <td>PPRL/PPRS secure enclave / eyes-off execution</td>
+            <td>Runs linkage inside a controlled enclave where raw data is not visible to developers.</td>
+            <td>Optional restricted data requiring strong execution controls.</td>
+            <td>Supports code-to-data execution and output review before release.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Method Selection Guide</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Data Situation</th>
+            <th>Recommended Approach</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Public data only</td><td>Direct public key linkage</td></tr>
+          <tr><td>Public data with unfamiliar schemas</td><td>Direct linkage plus optional LLM-assisted metadata review</td></tr>
+          <tr><td>Restricted person-level data with identifiers</td><td>PPRL/PPRS salted hash + q-grams or PPRL/PPRS Bloom filter / hash embeddings</td></tr>
+          <tr><td>Restricted data across multiple agencies</td><td>PPRL plus State Owner controlled execution, SMC, or honest broker</td></tr>
+          <tr><td>Raw data cannot leave owner environment</td><td>PPRL secure enclave / eyes-off execution</td></tr>
+          <tr><td>Sites need separate key ownership</td><td>Asymmetric key cryptography</td></tr>
+          <tr><td>Governance requires neutral matcher</td><td>Linkage Honest Broker</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Output Controls</h2>
+      <ul>
+        <li>Do not release raw restricted rows.</li>
+        <li>Do not release direct identifiers.</li>
+        <li>Prefer aggregate tables, pseudonymous IDs, match quality summaries, and dashboard-ready outputs.</li>
+        <li>Review small cells and re-identification risk.</li>
+        <li>Keep request, review, execution, and release records for audit.</li>
+      </ul>
+    </main>
+  </body>
+</html>

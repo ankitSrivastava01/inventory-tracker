@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1050" viewBox="0 0 1600 1050" role="img" aria-labelledby="title desc">
+  <title id="title">Data Access And State Dataset Linkage Tool Workflow</title>
+  <desc id="desc">Workflow diagram showing the Streamlit Developer/BrightQuery Linkage, Info, Request, and approval status flow plus State Owner review, linkage execution, and approved output release.</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#1f2937" flood-opacity="0.14"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b"/>
+    </marker>
+    <style>
+      .page { fill: #f8fafc; }
+      .title { font: 700 48px Arial, Helvetica, sans-serif; fill: #4b5563; letter-spacing: 0; }
+      .subtitle { font: 400 22px Arial, Helvetica, sans-serif; fill: #64748b; letter-spacing: 0; }
+      .lane-title { font: 700 25px Arial, Helvetica, sans-serif; fill: #334155; letter-spacing: 0; }
+      .lane-note { font: 400 17px Arial, Helvetica, sans-serif; fill: #64748b; letter-spacing: 0; }
+      .card { filter: url(#shadow); stroke-width: 2; rx: 8; ry: 8; }
+      .card-title { font: 700 22px Arial, Helvetica, sans-serif; fill: #1f2937; letter-spacing: 0; }
+      .card-text { font: 400 17px Arial, Helvetica, sans-serif; fill: #475569; letter-spacing: 0; }
+      .small { font: 400 15px Arial, Helvetica, sans-serif; fill: #64748b; letter-spacing: 0; }
+      .tag { font: 700 14px Arial, Helvetica, sans-serif; fill: #334155; letter-spacing: 0; }
+      .arrow { fill: none; stroke: #64748b; stroke-width: 4; marker-end: url(#arrow); }
+      .dash { fill: none; stroke: #94a3b8; stroke-width: 3; stroke-dasharray: 10 10; marker-end: url(#arrow); }
+      .divider { stroke: #cbd5e1; stroke-width: 2; stroke-dasharray: 8 10; }
+    </style>
+  </defs>
+
+  <rect class="page" width="1600" height="1050"/>
+
+  <text x="80" y="92" class="title">Data Access And State Dataset Linkage Tool Workflow</text>
+  <text x="82" y="132" class="subtitle">Streamlit workflow: Developer links state datasets; State Owner reviews governed or restricted execution when needed.</text>
+
+  <rect x="70" y="175" width="1460" height="300" rx="18" fill="#eef6f3" stroke="#b7d8cd" stroke-width="2"/>
+  <text x="105" y="225" class="lane-title">Developer / BrightQuery</text>
+  <text x="105" y="254" class="lane-note">Developer Dataset Linkage Workspace, Info guide, Request submission, and approval status</text>
+
+  <rect x="70" y="535" width="1460" height="350" rx="18" fill="#f3f6fb" stroke="#c3d2ea" stroke-width="2"/>
+  <text x="105" y="585" class="lane-title">State Owner</text>
+  <text x="105" y="614" class="lane-note">State Owner Request Review And Approval, controlled linkage execution, disclosure review, and release</text>
+
+  <line x1="790" y1="170" x2="790" y2="890" class="divider"/>
+  <text x="810" y="518" class="small">PySyft/PPRL-PPRS controls are optional for governed or restricted linkage</text>
+
+  <rect x="105" y="300" width="235" height="125" class="card" fill="#ffffff" stroke="#7fb7a6"/>
+  <text x="130" y="340" class="card-title">1. Login</text>
+  <text x="130" y="372" class="card-text">Choose Developer role</text>
+  <text x="130" y="398" class="card-text">with any user name</text>
+
+  <rect x="385" y="300" width="245" height="125" class="card" fill="#ffffff" stroke="#7fb7a6"/>
+  <text x="410" y="340" class="card-title">2. Linkage Workspace</text>
+  <text x="410" y="372" class="card-text">Run selected state</text>
+  <text x="410" y="398" class="card-text">dataset linkage</text>
+
+  <rect x="675" y="300" width="235" height="125" class="card" fill="#ffffff" stroke="#7fb7a6"/>
+  <text x="700" y="340" class="card-title">3. Info Guide</text>
+  <text x="700" y="372" class="card-text">Review method fit</text>
+  <text x="700" y="398" class="card-text">and privacy notes</text>
+
+  <rect x="955" y="300" width="245" height="125" class="card" fill="#ffffff" stroke="#7fb7a6"/>
+  <text x="980" y="340" class="card-title">4. Request Submission</text>
+  <text x="980" y="372" class="card-text">Submit dataset, code,</text>
+  <text x="980" y="398" class="card-text">and request details</text>
+
+  <rect x="1245" y="300" width="250" height="125" class="card" fill="#ffffff" stroke="#7fb7a6"/>
+  <text x="1270" y="340" class="card-title">5. Approval Status</text>
+  <text x="1270" y="372" class="card-text">View State Owner</text>
+  <text x="1270" y="398" class="card-text">decision and status</text>
+
+  <path d="M 340 363 L 380 363" class="arrow"/>
+  <path d="M 630 363 L 670 363" class="arrow"/>
+  <path d="M 910 363 L 950 363" class="arrow"/>
+  <path d="M 1200 363 L 1240 363" class="arrow"/>
+
+  <rect x="190" y="660" width="275" height="135" class="card" fill="#ffffff" stroke="#88aee0"/>
+  <text x="215" y="700" class="card-title">6. Review Request</text>
+  <text x="215" y="732" class="card-text">Inspect purpose, datasets,</text>
+  <text x="215" y="758" class="card-text">Git code, evidence, outputs</text>
+
+  <rect x="550" y="660" width="280" height="135" class="card" fill="#ffffff" stroke="#88aee0"/>
+  <text x="575" y="700" class="card-title">7. Approval Decision</text>
+  <text x="575" y="732" class="card-text">Approve, request changes,</text>
+  <text x="575" y="758" class="card-text">or reject the submission</text>
+
+  <rect x="920" y="660" width="285" height="135" class="card" fill="#ffffff" stroke="#88aee0"/>
+  <text x="945" y="700" class="card-title">8. Owner Linkage</text>
+  <text x="945" y="732" class="card-text">Use direct public linkage first;</text>
+  <text x="945" y="758" class="card-text">add encryption only if needed</text>
+
+  <rect x="1290" y="660" width="205" height="135" class="card" fill="#ffffff" stroke="#88aee0"/>
+  <text x="1315" y="700" class="card-title">9. Release</text>
+  <text x="1315" y="732" class="card-text">Approve safe linked</text>
+  <text x="1315" y="758" class="card-text">records and summaries</text>
+
+  <path d="M 465 728 L 545 728" class="arrow"/>
+  <path d="M 830 728 L 915 728" class="arrow"/>
+  <path d="M 1205 728 L 1285 728" class="arrow"/>
+
+  <path d="M 1078 425 C 1078 525, 328 545, 328 655" class="dash"/>
+  <text x="660" y="512" class="tag">submit PySyft-style request packet</text>
+
+  <path d="M 1392 660 C 1425 545, 1360 470, 1370 430" class="dash"/>
+  <text x="1365" y="528" class="tag">decision separate from linkage</text>
+
+  <rect x="105" y="925" width="1390" height="70" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="135" y="956" class="card-title">Governance rule</text>
+  <text x="335" y="956" class="card-text">The main flow links public state statistical datasets; State Owners control governed execution and restricted release when needed.</text>
+  <text x="335" y="982" class="small">Request, review, execution, and release artifacts are retained for audit.</text>
+</svg>

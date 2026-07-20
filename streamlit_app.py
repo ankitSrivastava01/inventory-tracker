@@ -63,6 +63,8 @@ class LinkageSettings:
     review_threshold: float
     use_ai: bool
     ai_model: str
+    uploaded_left_df: pd.DataFrame | None = None
+    uploaded_right_df: pd.DataFrame | None = None
 
 
 def init_state() -> None:
@@ -71,6 +73,7 @@ def init_state() -> None:
         "approval_request": {},
         "review_decision": {},
         "owner_linkage_run": False,
+        "developer_linkage_run": False,
         "ai_suggestion": "",
         "uploaded_left_df": pd.DataFrame(),
         "uploaded_right_df": pd.DataFrame(),
@@ -80,7 +83,16 @@ def init_state() -> None:
 
 
 def reset_demo() -> None:
-    for key in ["submitted_package", "approval_request", "review_decision", "owner_linkage_run", "ai_suggestion", "uploaded_left_df", "uploaded_right_df"]:
+    for key in [
+        "submitted_package",
+        "approval_request",
+        "review_decision",
+        "owner_linkage_run",
+        "developer_linkage_run",
+        "ai_suggestion",
+        "uploaded_left_df",
+        "uploaded_right_df",
+    ]:
         st.session_state.pop(key, None)
     init_state()
 
@@ -334,7 +346,9 @@ def infer_classification(df: pd.DataFrame) -> str:
 def selected_datasets(settings: LinkageSettings) -> tuple[str, pd.DataFrame, str, pd.DataFrame]:
     catalog = dataset_catalog()
     if settings.data_source == "Upload CSVs":
-        return settings.left_dataset, st.session_state.uploaded_left_df, settings.right_dataset, st.session_state.uploaded_right_df
+        left = settings.uploaded_left_df if settings.uploaded_left_df is not None else st.session_state.uploaded_left_df
+        right = settings.uploaded_right_df if settings.uploaded_right_df is not None else st.session_state.uploaded_right_df
+        return settings.left_dataset, left, settings.right_dataset, right
     return settings.left_dataset, catalog[settings.left_dataset]["df"], settings.right_dataset, catalog[settings.right_dataset]["df"]
 
 
@@ -505,6 +519,27 @@ def dataset_summary(name: str, df: pd.DataFrame, classification: str) -> pd.Data
             ["Direct identifier fields", ", ".join([column for column in df.columns if column in DIRECT_IDENTIFIERS]) or "None"],
         ],
         columns=["Metadata", "Value"],
+    )
+
+
+def readable_key(key: str) -> str:
+    return key.replace("_", " ").replace("/", " / ").title()
+
+
+def readable_value(value: Any) -> str:
+    if isinstance(value, dict):
+        return "; ".join(f"{readable_key(str(key))}: {readable_value(item)}" for key, item in value.items())
+    if isinstance(value, list):
+        return ", ".join(readable_value(item) for item in value) or "None"
+    if value is None:
+        return ""
+    return str(value)
+
+
+def summary_frame(payload: dict[str, Any], key_label: str = "Item", value_label: str = "Value") -> pd.DataFrame:
+    return pd.DataFrame(
+        [[readable_key(str(key)), readable_value(value)] for key, value in payload.items()],
+        columns=[key_label, value_label],
     )
 
 
@@ -766,14 +801,14 @@ def linked_record_view(linked: pd.DataFrame) -> pd.DataFrame:
 def pysyft_methodology_table() -> pd.DataFrame:
     return pd.DataFrame(
         [
-            ["1", "Intake request", "Researcher", "Submit purpose, datasets, fields, linkage goal, and requested outputs."],
-            ["2", "Metadata approval", "State owner", "Approve data dictionary, schema, ERD, mock data shape, and disclosure rules."],
-            ["3", "Mock-data development", "Researcher", "Build and test PPRL plus analytics code without touching raw private records."],
-            ["4", "Code submission", "Researcher", "Submit code, input/output contract, thresholds, privacy controls, and test evidence."],
-            ["5", "Owner review", "State owner", "Review code for purpose fit, identifier handling, PPRL risk, and output safety."],
-            ["6", "Code-to-data run", "PySyft workspace", "Run approved code near the restricted data while keeping raw rows inaccessible."],
+            ["1", "Intake request", "Researcher", "Submit dataset details, code details, request details, and linkage goal."],
+            ["2", "Metadata approval", "State owner", "Approve data dictionary, schema, ERD, row grain, shared keys, and disclosure rules."],
+            ["3", "Linkage development", "Researcher", "Build and test public statistical linkage first; add PPRL/PPRS encryption only if data sensitivity requires it."],
+            ["4", "Code submission", "Researcher", "Submit Git repository, branch, commit/tag, code path, and code details."],
+            ["5", "Owner review", "State owner", "Review code for purpose fit, linkage keys, optional encryption controls, and output safety."],
+            ["6", "Code-to-data run", "PySyft workspace", "Run approved code in a controlled workspace when governance or sensitivity requires it."],
             ["7", "Output review", "State owner", "Inspect match metrics, small cells, linked IDs, and aggregate tables before release."],
-            ["8", "Approved release", "PySyft workspace", "Release only approved outputs and retain the request, decision, and execution audit trail."],
+            ["8", "Restricted release control", "PySyft workspace", "Keep request decisions separate from linkage output and retain the audit trail."],
         ],
         columns=["Step", "Stage", "Lead", "Methodology"],
     )
@@ -781,7 +816,7 @@ def pysyft_methodology_table() -> pd.DataFrame:
 
 def login_panel() -> dict[str, str] | None:
     if not st.session_state.get("logged_in", False):
-        st.title("State Data Access Portal")
+        st.title("Data Access And State Dataset Linkage Tool")
         st.caption("Login as a BrightQuery developer or State Owner. Any user name is accepted for this demo.")
         with st.form("login_form"):
             role = st.radio("Login as", ["Developer / BrightQuery", "State Owner"])
@@ -796,7 +831,7 @@ def login_panel() -> dict[str, str] | None:
         return None
 
     with st.sidebar:
-        st.header("Signed In")
+        st.header("Signed-In User And Role")
         st.write(f"**User:** {st.session_state.auth_username}")
         st.write(f"**Role:** {st.session_state.auth_role}")
         if st.button("Logout", width="stretch"):
@@ -814,7 +849,7 @@ def login_panel() -> dict[str, str] | None:
 
 def sidebar() -> LinkageSettings:
     with st.sidebar:
-        st.header("Linkage Controls")
+        st.header("Dataset And Linkage Control Panel")
         if st.button("Clear all / reset demo", width="stretch"):
             reset_demo()
             st.rerun()
@@ -914,18 +949,23 @@ def default_internal_linkage_method(left_classification: str, right_classificati
     return "PPRL salted hash + q-grams"
 
 
-def request_settings_controls(show_linkage_method: bool = True) -> LinkageSettings:
-    st.subheader("Request scope")
-    data_source = st.selectbox("Dataset source", ["Mock datasets", "Upload CSVs"])
+def request_settings_controls(show_linkage_method: bool = True, key_prefix: str = "request") -> LinkageSettings:
+    def widget_key(name: str) -> str:
+        return f"{key_prefix}_{name}"
+
+    st.subheader("Dataset Scope And Linkage Request Setup")
+    data_source = st.selectbox("Dataset source", ["Mock datasets", "Upload CSVs"], key=widget_key("data_source"))
     catalog = dataset_catalog()
     dataset_names = list(catalog.keys())
+    uploaded_left_df = pd.DataFrame()
+    uploaded_right_df = pd.DataFrame()
 
     if data_source == "Mock datasets":
         scenarios = demo_scenarios()
         scenario_label = "Demo linkage scenario" if show_linkage_method else "Demo request scenario"
-        scenario_name = st.selectbox(scenario_label, ["Custom pair", *scenarios.keys()])
-        left_default = "Private education records"
-        right_default = "Public O*NET skill scores"
+        scenario_name = st.selectbox(scenario_label, ["Custom pair", *scenarios.keys()], key=widget_key("scenario"))
+        left_default = "Public LEHD workforce statistics"
+        right_default = "Public CPS labor force sample"
         if scenario_name != "Custom pair":
             scenario = scenarios[scenario_name]
             left_default = scenario["left"]
@@ -934,37 +974,39 @@ def request_settings_controls(show_linkage_method: bool = True) -> LinkageSettin
                 st.caption(f"{scenario['route']}: `{left_default}` + `{right_default}`")
             else:
                 st.caption(f"Selected pair: `{left_default}` + `{right_default}`")
-        left_dataset = st.selectbox("Dataset 1", dataset_names, index=dataset_names.index(left_default))
-        right_dataset = st.selectbox("Dataset 2", dataset_names, index=dataset_names.index(right_default))
+        left_dataset = st.selectbox("Dataset 1", dataset_names, index=dataset_names.index(left_default), key=widget_key("left_dataset"))
+        right_dataset = st.selectbox("Dataset 2", dataset_names, index=dataset_names.index(right_default), key=widget_key("right_dataset"))
         left_classification = catalog[left_dataset]["classification"]
         right_classification = catalog[right_dataset]["classification"]
     else:
-        left_upload = st.file_uploader("Upload left CSV", type=["csv"], key="request_left_csv_upload")
-        right_upload = st.file_uploader("Upload right CSV", type=["csv"], key="request_right_csv_upload")
+        left_upload = st.file_uploader("Upload left CSV", type=["csv"], key=widget_key("left_csv_upload"))
+        right_upload = st.file_uploader("Upload right CSV", type=["csv"], key=widget_key("right_csv_upload"))
 
         if left_upload is not None:
-            st.session_state.uploaded_left_df = pd.read_csv(left_upload)
+            uploaded_left_df = pd.read_csv(left_upload)
+            st.session_state.uploaded_left_df = uploaded_left_df
             left_dataset = left_upload.name
         else:
             left_dataset = "Uploaded left CSV"
-            st.session_state.uploaded_left_df = pd.DataFrame()
 
         if right_upload is not None:
-            st.session_state.uploaded_right_df = pd.read_csv(right_upload)
+            uploaded_right_df = pd.read_csv(right_upload)
+            st.session_state.uploaded_right_df = uploaded_right_df
             right_dataset = right_upload.name
         else:
             right_dataset = "Uploaded right CSV"
-            st.session_state.uploaded_right_df = pd.DataFrame()
 
         left_classification = st.selectbox(
             "Left data classification",
             ["restricted", "public"],
-            index=0 if infer_classification(st.session_state.uploaded_left_df) == "restricted" else 1,
+            index=0 if infer_classification(uploaded_left_df) == "restricted" else 1,
+            key=widget_key("left_classification"),
         )
         right_classification = st.selectbox(
             "Right data classification",
             ["restricted", "public"],
-            index=0 if infer_classification(st.session_state.uploaded_right_df) == "restricted" else 1,
+            index=0 if infer_classification(uploaded_right_df) == "restricted" else 1,
+            key=widget_key("right_classification"),
         )
 
     if show_linkage_method:
@@ -980,11 +1022,12 @@ def request_settings_controls(show_linkage_method: bool = True) -> LinkageSettin
                 "Asymmetric key cryptography",
                 "PPRL secure enclave / eyes-off execution",
             ],
+            key=widget_key("linkage_method"),
         )
-        auto_threshold = st.slider("Auto-match threshold", 0.70, 0.98, 0.86, 0.01)
-        review_threshold = st.slider("Review threshold", 0.50, 0.90, 0.72, 0.01)
+        auto_threshold = st.slider("Auto-match threshold", 0.70, 0.98, 0.86, 0.01, key=widget_key("auto_threshold"))
+        review_threshold = st.slider("Review threshold", 0.50, 0.90, 0.72, 0.01, key=widget_key("review_threshold"))
         llm_method_selected = linkage_method == "LLM-assisted linkage"
-        use_ai_toggle = st.toggle("Use AI to enhance linkage", value=llm_method_selected)
+        use_ai_toggle = st.toggle("Use AI to enhance linkage", value=llm_method_selected, key=widget_key("use_ai"))
         use_ai = llm_method_selected or use_ai_toggle
     else:
         linkage_method = default_internal_linkage_method(left_classification, right_classification)
@@ -1011,6 +1054,8 @@ def request_settings_controls(show_linkage_method: bool = True) -> LinkageSettin
         review_threshold=review_threshold,
         use_ai=use_ai,
         ai_model=ai_model,
+        uploaded_left_df=uploaded_left_df if data_source == "Upload CSVs" else None,
+        uploaded_right_df=uploaded_right_df if data_source == "Upload CSVs" else None,
     )
 
 
@@ -1018,12 +1063,13 @@ def workflow_tab(settings: LinkageSettings) -> None:
     left_name, left, right_name, right = selected_datasets(settings)
     classification = classify_pair(left_name, right_name, settings.left_classification, settings.right_classification)
 
-    st.header("Linkage Tool Flow")
+    st.header("End-To-End State Dataset Linkage Tool Flow")
     st.markdown(
         """
         <div class="callout">
-        The tool links state datasets using the least-sensitive path available. Public statistical data uses direct keys.
-        Restricted person-level data uses PPRL-style privacy controls and privacy-safe output release.
+        The tool is primarily for linking state datasets for analysis. Non-restricted public statistical data uses
+        direct shared keys such as state, county, year, SOC, CIP, NAICS, program, and geography.
+        PySyft governance and PPRL/PPRS-style encryption are used only when policy or sensitivity requires them.
         </div>
         """,
         unsafe_allow_html=True,
@@ -1032,18 +1078,18 @@ def workflow_tab(settings: LinkageSettings) -> None:
     st.write(f"**Data classification:** {classification}")
     st.write(f"**Selected linkage method:** {settings.pprl_technique}")
 
-    st.subheader("Client instructions")
+    st.subheader("Step-By-Step Client Instructions For Running Linkage")
     instructions = pd.DataFrame(
         [
             ["1", "Choose data source", "Use mock datasets or upload two CSV files from the sidebar."],
             ["2", "Select datasets", "Pick the left and right datasets to link."],
-            ["3", "Classify data", "For uploads, mark each file as public or restricted."],
-            ["4", "Choose linkage method", "Use direct linkage for public data, LLM-assisted planning for metadata review, or PPRL for restricted linkage."],
+            ["3", "Classify data", "For uploads, mark each file as public/non-restricted or restricted."],
+            ["4", "Choose linkage method", "Use direct linkage for public data first; use PySyft, PPRL, or PPRS-style encryption only when needed."],
             ["5", "Review metadata", "Open Mock Data to inspect schemas, field types, identifier flags, and row counts."],
             ["6", "Review mapping", "Open Schema Mapping to see proposed join keys and fields needing review."],
             ["7", "Save package", "Open Linkage Package to record the selected technique, outputs, and privacy controls."],
-            ["8", "Request approval", "Open Researcher Approval to submit code for state-owner review before private-data execution."],
-            ["9", "Run linkage", "Open Results to generate linked cross-reference records and aggregate summaries."],
+            ["8", "Request approval", "Open Researcher Approval to submit code for state-owner review when governed execution is required."],
+            ["9", "Run linkage", "Open Linkage to generate linked cross-reference records and aggregate summaries."],
         ],
         columns=["Step", "Action", "Client note"],
     )
@@ -1052,23 +1098,23 @@ def workflow_tab(settings: LinkageSettings) -> None:
     flow = pd.DataFrame(
         [
             ["1", "Ingest datasets", "Capture schema, data dictionary, ERD, row grain, and privacy classification."],
-            ["2", "Classify data", "Decide public direct linkage vs. restricted PPRL/PySyft route."],
-            ["3A", "Public route", "Standardize fields and link with public keys such as SOC, CIP, year, county, or program."],
-            ["3B", "Restricted route", "Create mock data, choose a restricted linkage method, and run privacy-preserving matching."],
+            ["2", "Classify data", "Identify public/non-restricted statistical data first, then flag restricted data only when present."],
+            ["3A", "Primary public route", "Standardize fields and link state datasets with SOC, CIP, NAICS, year, county, geography, or program keys."],
+            ["3B", "Sensitive route if needed", "Use PySyft governance and PPRL/PPRS encryption when identifiers or restricted rules require protection."],
             ["4", "Python assistance", "Use deterministic Python heuristics on metadata to suggest linkage keys and risks."],
-            ["5", "PPRL method", "For restricted data, use salted hashes, q-grams, Bloom-filter-style encodings, or hash embeddings as approved."],
-            ["6", "Output release", "Release public linked tables or privacy-safe restricted outputs only."],
+            ["5", "Optional encryption", "For restricted data, use salted hashes, q-grams, Bloom-filter encodings, hash embeddings, or PPRS-style tokens as approved."],
+            ["6", "Output release", "Release linked public statistical tables directly; apply disclosure review for restricted outputs."],
         ],
         columns=["Step", "Stage", "Action"],
     )
     st.dataframe(flow, hide_index=True, width="stretch")
 
-    st.subheader("PySyft methodology")
+    st.subheader("PySyft-Style Methodology For Governed Linkage")
     st.markdown(
         """
         <div class="callout">
-        PySyft is the governed code-to-data workflow around the linkage method. It records the request,
-        supports owner review, runs approved code near private data, and releases only approved outputs.
+        PySyft is the optional governed code-to-data workflow around the linkage method. It can record requests,
+        support owner review, run approved code in a controlled workspace, and retain the release audit trail.
         </div>
         """,
         unsafe_allow_html=True,
@@ -1079,14 +1125,14 @@ def workflow_tab(settings: LinkageSettings) -> None:
         [
             ["Public aggregate/statistical", "No", "No", "No", "No", "Direct key linkage"],
             ["Mixed private/public", "Maybe", "Maybe", "Maybe", "Maybe", "Public keys plus pseudonymized private refs"],
-            ["Restricted person-level", "Yes", "Yes", "Yes", "Yes", "PPRL + PySyft-style secure execution"],
+            ["Restricted person-level", "Yes", "Yes", "Yes", "Yes", "Optional PPRL/PPRS + PySyft-style secure execution"],
         ],
-        columns=["Data type", "Person-level?", "Identifiers?", "PPRL needed?", "PySyft needed?", "Approach"],
+        columns=["Data type", "Person-level?", "Identifiers?", "Encryption needed?", "Governance needed?", "Approach"],
     )
-    st.subheader("Decision guide")
+    st.subheader("Decision Guide For Selecting Public, Mixed, Or Restricted Linkage")
     st.dataframe(decision, hide_index=True, width="stretch")
 
-    st.subheader("Method summary")
+    st.subheader("Detailed Method Summary Reference")
     st.write("Open **Instructions & Methods** for client instructions and detailed method explanations.")
 
 
@@ -1094,18 +1140,19 @@ def instructions_tab(settings: LinkageSettings) -> None:
     left_name, left, right_name, right = selected_datasets(settings)
     classification = classify_pair(left_name, right_name, settings.left_classification, settings.right_classification)
 
-    st.header("Instructions & Methods")
+    st.header("Client Instructions And Linkage Method Reference")
     st.markdown(
         """
         <div class="callout">
-        Use this tab as the client guide. Public data can be linked directly with shared keys. Restricted private
-        data should use approved PPRL methods. AI is optional and only enhances metadata review and key selection.
+        Use this tab as the client guide. The main flow is state dataset linkage for public or non-restricted
+        statistical data using shared keys. PySyft governance, PPRL, and PPRS-style encryption are optional
+        controls for sensitive or restricted cases.
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-    st.subheader("Current selection")
+    st.subheader("Current Dataset Pair, Classification, And Method Selection")
     st.dataframe(
         pd.DataFrame(
             [
@@ -1121,17 +1168,17 @@ def instructions_tab(settings: LinkageSettings) -> None:
         width="stretch",
     )
 
-    st.subheader("Client instructions")
+    st.subheader("Client Instructions For Configuring And Running The Tool")
     st.dataframe(
         pd.DataFrame(
             [
                 ["1", "Choose a scenario", "Use a 4/4/4 built-in scenario or select Custom pair."],
-                ["2", "Upload client CSVs", "For client files, choose Upload CSVs and classify each file as public or restricted."],
+                ["2", "Upload client CSVs", "For client files, choose Upload CSVs and classify each file as public/non-restricted or restricted."],
                 ["3", "Review metadata", "Check row counts, columns, direct identifier flags, geo fields, and info fields."],
-                ["4", "Choose linkage method", "Use direct public keys for public data; use PPRL for restricted data."],
+                ["4", "Choose linkage method", "Use direct public keys as the main path; use PySyft/PPRL/PPRS controls only when needed."],
                 ["5", "Optionally enable AI", "AI can suggest keys and risks from metadata only; it should not receive raw private rows or PII."],
-                ["6", "Save package", "Record datasets, purpose, requested outputs, selected technique, and privacy controls."],
-                ["7", "Submit approval request", "Use Researcher Approval to request owner review of code, thresholds, evidence, and release outputs."],
+                ["6", "Save package", "Record datasets, selected technique, code details, and privacy controls when needed."],
+                ["7", "Submit approval request", "Use Request to submit the PySyft-style data asset, code asset, execution context, output policy, and review notes."],
                 ["8", "Run linkage", "Review linked cross-reference output and aggregate summaries."],
                 ["9", "Release safely", "Public outputs may be exported directly; restricted outputs should stay pseudonymized/aggregate."],
             ],
@@ -1141,7 +1188,7 @@ def instructions_tab(settings: LinkageSettings) -> None:
         width="stretch",
     )
 
-    st.subheader("Public methods - no encryption")
+    st.subheader("Public / Non-Restricted Linkage Methods Without Encryption")
     st.dataframe(
         pd.DataFrame(
             [
@@ -1156,21 +1203,21 @@ def instructions_tab(settings: LinkageSettings) -> None:
         width="stretch",
     )
 
-    st.subheader("Restricted PPRL methods")
+    st.subheader("Optional Restricted-Data Encryption And PPRL/PPRS Methods")
     st.markdown(
         """
         <div class="callout">
-        PPRL protects privacy by transforming identifiers before matching. Participating organizations encode
-        fields such as names, dates of birth, and addresses into tokens or mathematical representations. A
-        linkage agent or secure execution environment compares encoded values without seeing the raw PII.
+        PPRL/PPRS-style encryption is not the primary requirement for public statistical linkage. Use it only
+        when a state dataset contains restricted identifiers or policy requires encrypted/tokenized matching.
+        Participating organizations encode fields into tokens or mathematical representations before comparison.
         </div>
         """,
         unsafe_allow_html=True,
     )
     methods = pd.DataFrame(
             [
-                ["LLM-assisted linkage", "Uses an LLM to review metadata and recommend keys, blocking fields, risks, and outputs.", "Useful for unfamiliar schemas; raw private rows and PII should not be sent."],
-                ["Salted hashes", "Exact or near-exact encoded comparisons for stable identifiers.", "Useful for IDs, DOB, ZIP prefixes, and controlled blocking fields."],
+            ["LLM-assisted linkage", "Uses an LLM to review metadata and recommend keys, blocking fields, risks, and outputs.", "Useful for unfamiliar schemas; raw private rows and PII should not be sent."],
+            ["Salted hashes", "Exact or near-exact encoded comparisons for stable identifiers.", "Optional restricted-data/PPRS-style encryption for IDs, DOB, ZIP prefixes, and controlled blocking fields."],
             ["Q-gram similarity", "Fuzzy comparison over tokenized names and addresses.", "Useful for typos, spelling variants, and abbreviations."],
             ["Bloom filter encoding", "Converts sensitive attributes into cryptographic hashed bit-arrays.", "Default PPRL technique for similarity scoring without exposing original text."],
             ["Hash embeddings", "Embedding extension of Bloom-filter linkage that can learn associations from matched examples.", "Useful when training data and assurance are available."],
@@ -1183,13 +1230,13 @@ def instructions_tab(settings: LinkageSettings) -> None:
     )
     st.dataframe(methods, hide_index=True, width="stretch")
 
-    st.subheader("PySyft methodology")
+    st.subheader("PySyft-Style Request, Code Review, Execution, And Release Methodology")
     st.dataframe(pysyft_methodology_table(), hide_index=True, width="stretch")
     st.dataframe(
         pd.DataFrame(
             [
                 ["Request record", "Purpose, datasets, fields, legal basis, expected outputs, and reviewer decisions."],
-                ["Code package", "Versioned PPRL code, analytics code, dependency list, test plan, and mock-data validation evidence."],
+                ["Code package", "Versioned linkage code, optional PPRL/PPRS code, Git location, dependency notes, and code details."],
                 ["Execution controls", "State-controlled secrets, approved inputs, no raw row export, and code-to-data execution."],
                 ["Release contract", "Approved output schema, suppression rules, linked-ID policy, match-score policy, and aggregate-only defaults."],
                 ["Audit trail", "Submission, review comments, approvals, execution logs, output decisions, and release history."],
@@ -1200,7 +1247,7 @@ def instructions_tab(settings: LinkageSettings) -> None:
         width="stretch",
     )
 
-    st.subheader("Mixed private/public methods")
+    st.subheader("Mixed Public And Restricted Dataset Linkage Methods")
     st.dataframe(
         pd.DataFrame(
             [
@@ -1215,7 +1262,7 @@ def instructions_tab(settings: LinkageSettings) -> None:
         width="stretch",
     )
 
-    st.subheader("AI enhancement option")
+    st.subheader("Optional AI Metadata Planning For Linkage Key Selection")
     st.dataframe(
         pd.DataFrame(
             [
@@ -1234,14 +1281,14 @@ def instructions_tab(settings: LinkageSettings) -> None:
 
 def data_tab(settings: LinkageSettings) -> None:
     left_name, left, right_name, right = selected_datasets(settings)
-    st.header("Data Preview")
+    st.header("Metadata-Only Dataset Preview And Field Review")
     st.write("Use mock datasets or upload two CSV files. This view shows metadata only, not source records.")
 
     classification = classify_pair(left_name, right_name, settings.left_classification, settings.right_classification)
     if left.empty or right.empty:
         st.warning("Upload two CSV files or switch to mock datasets.")
 
-    left_tab, right_tab, testing_tab, metadata_tab = st.tabs([left_name, right_name, "All mock metadata", "Metadata JSON"])
+    left_tab, right_tab, testing_tab, metadata_tab = st.tabs([left_name, right_name, "All mock metadata", "Metadata Summary"])
     with left_tab:
         st.dataframe(dataset_summary(left_name, left, settings.left_classification), hide_index=True, width="stretch")
         st.dataframe(metadata_table(left), hide_index=True, width="stretch")
@@ -1264,52 +1311,62 @@ def data_tab(settings: LinkageSettings) -> None:
             )
     with metadata_tab:
         payload = safe_schema_payload(left_name, left, right_name, right)
-        st.json(payload)
+        st.dataframe(summary_frame(payload, "Metadata", "Details"), hide_index=True, width="stretch")
 
 
 def schema_mapping_tab(settings: LinkageSettings) -> None:
     left_name, left, right_name, right = selected_datasets(settings)
-    st.header("Geo / Info Schema Mapping")
+    st.header("Geographic And Informational Schema Mapping")
     st.write("Python proposes field mappings using column names, geography keys, and informational linkage fields.")
 
     if left.empty or right.empty:
         st.warning("Upload two CSV files or switch to mock datasets before mapping.")
         return
 
-    st.subheader("Python heuristic mapping")
+    st.subheader("Python Heuristic Mapping For Candidate Linkage Fields")
     st.dataframe(heuristic_schema_mapping(left, right), hide_index=True, width="stretch")
 
     payload = safe_schema_payload(left_name, left, right_name, right)
     left_features = linkage_feature_summary(left)
     right_features = linkage_feature_summary(right)
-    st.subheader("Geo and info fields")
-    st.json(
-        {
-            "left_dataset": left_name,
-            "left_geographic_fields": left_features["geographic_fields"],
-            "left_informational_fields": left_features["informational_fields"],
-            "right_dataset": right_name,
-            "right_geographic_fields": right_features["geographic_fields"],
-            "right_informational_fields": right_features["informational_fields"],
-        }
+    st.subheader("Detected Geographic And Informational Fields")
+    st.dataframe(
+        summary_frame(
+            {
+                "left_dataset": left_name,
+                "left_geographic_fields": left_features["geographic_fields"],
+                "left_informational_fields": left_features["informational_fields"],
+                "right_dataset": right_name,
+                "right_geographic_fields": right_features["geographic_fields"],
+                "right_informational_fields": right_features["informational_fields"],
+            },
+            "Area",
+            "Fields",
+        ),
+        hide_index=True,
+        width="stretch",
     )
-    st.subheader("Metadata-only schema payload")
-    st.json(payload)
+    st.subheader("Metadata-Only Schema Summary For Review")
+    st.dataframe(summary_frame(payload, "Metadata", "Details"), hide_index=True, width="stretch")
 
-    st.subheader("AI geo/info linkage plan")
+    st.subheader("AI-Assisted Geographic And Informational Linkage Plan")
     if not settings.use_ai:
         st.info("Turn on `Use AI to enhance linkage` in the sidebar to generate a metadata-only AI linkage plan.")
     else:
         if st.button("Generate AI geo/info plan", type="primary"):
             st.session_state.ai_suggestion = ai_linkage_plan(payload, settings)
         if st.session_state.ai_suggestion:
-            st.code(st.session_state.ai_suggestion, language="json")
+            ai_plan = parse_ai_plan(st.session_state.ai_suggestion)
+            if ai_plan:
+                st.dataframe(summary_frame(ai_plan, "Plan area", "Recommendation"), hide_index=True, width="stretch")
+            else:
+                st.write(st.session_state.ai_suggestion)
 
 
 def submit_tab(settings: LinkageSettings) -> None:
     left_name, left, right_name, right = selected_datasets(settings)
     classification = classify_pair(left_name, right_name, settings.left_classification, settings.right_classification)
-    st.header("Linkage Package")
+    st.header("Linkage Package Summary For Governance And Audit")
 
     if left.empty or right.empty:
         st.warning("Upload two CSV files or switch to mock datasets before building the linkage package.")
@@ -1336,23 +1393,23 @@ def submit_tab(settings: LinkageSettings) -> None:
         "left_dataset": left_name,
         "right_dataset": right_name,
         "requested_outputs": ["linked analytical output", "match quality metrics", "aggregate summaries"],
-        "privacy_controls": ["mask direct identifiers", "use PPRL for restricted identifiers", "release privacy-safe outputs"],
+        "privacy_controls": ["use direct public keys for non-restricted statistical data", "mask direct identifiers when present", "use PPRL/PPRS encryption only for restricted identifiers", "release privacy-safe outputs"],
         "pysyft_methodology": [
             "submit purpose, dataset scope, code, thresholds, and requested output contract",
-            "route package to state-owner review before private-data execution",
-            "run approved code in a controlled code-to-data workspace",
-            "release only owner-approved outputs after disclosure review",
+            "route package to state-owner review when governed execution is required",
+            "run approved code in a controlled code-to-data workspace when sensitivity requires it",
+            "release public statistical outputs directly or restricted outputs after disclosure review",
             "retain request, approval, execution, and release audit records",
         ],
         "governance_artifacts": [
             "data use agreement or owner approval record",
-            "metadata and mock-data validation evidence",
-            "versioned PPRL and analytics code package",
+            "metadata and mock-data validation notes",
+            "versioned linkage and optional PPRL/PPRS encryption code package",
             "output schema and disclosure-control plan",
             "PySyft-style request, review, execution, and release audit trail",
         ],
     }
-    st.json(package)
+    st.dataframe(summary_frame(package, "Package area", "Details"), hide_index=True, width="stretch")
 
     if st.button("Save linkage package", type="primary"):
         st.session_state.submitted_package = {"purpose": purpose, **package}
@@ -1362,12 +1419,12 @@ def submit_tab(settings: LinkageSettings) -> None:
 def approval_request_tab(settings: LinkageSettings, user_context: dict[str, str]) -> None:
     left_name, left, right_name, right = selected_datasets(settings)
     classification = classify_pair(left_name, right_name, settings.left_classification, settings.right_classification)
-    st.header("Submit Request")
+    st.header("Submit Dataset And Code Request For State Owner Review")
     st.markdown(
         """
         <div class="callout">
-        BrightQuery developers use this page to submit a request form and Git link for State Owner review.
-        The State Owner will see the submitted request, repository link, evidence, and requested outputs before approving execution.
+        BrightQuery developers use this page to submit only the dataset selection, code package, and request details.
+        The State Owner reviews the selected datasets, repository link, code path, and details before approving governed execution if needed.
         </div>
         """,
         unsafe_allow_html=True,
@@ -1377,12 +1434,13 @@ def approval_request_tab(settings: LinkageSettings, user_context: dict[str, str]
         st.warning("Upload two CSV files or switch to mock datasets before preparing an approval request.")
         return
 
-    st.subheader("Selected submission context")
+    st.subheader("Selected Dataset, Method, And Submission Context")
     st.dataframe(
         pd.DataFrame(
             [
                 ["Dataset pair", f"{left_name} + {right_name}"],
                 ["Classification", classification],
+                ["Requested linkage method", settings.pprl_technique],
                 ["Submitted by", user_context["username"]],
             ],
             columns=["Item", "Value"],
@@ -1392,71 +1450,52 @@ def approval_request_tab(settings: LinkageSettings, user_context: dict[str, str]
     )
 
     with st.form("researcher_approval_request_form"):
-        st.subheader("Request form")
-        researcher_name = st.text_input("Researcher name", value=user_context["username"])
-        researcher_org = st.text_input("Researcher organization", value="BrightQuery / CTOT")
-        state_owner = st.text_input("State owner / reviewer", value="State Data Owner")
-        project_title = st.text_input("Project title", value="CTOT education-to-workforce linkage analysis")
-        code_package_name = st.text_input("Code package name", value="ctot_pprl_linkage_job")
-        git_repository_url = st.text_input("Git repository link", value="https://github.com/brightquery/ctot-pprl-linkage")
+        st.subheader("PySyft-Style Data Asset And Code Asset Request Form")
+        st.caption("Submit a governed code request with dataset asset, code asset, execution context, output policy, and review notes.")
+        request_title = st.text_input("Request name", value="State statistical dataset linkage")
+        dataset_details = st.text_area(
+            "Data asset / dataset details",
+            value=(
+                f"Link `{left_name}` with `{right_name}` using `{settings.pprl_technique}`. "
+                f"Classification: {classification}."
+            ),
+            height=90,
+        )
+        code_package_name = st.text_input("Code package name", value="state_dataset_linkage_job")
+        git_repository_url = st.text_input("Git repository link", value="https://github.com/brightquery/state-dataset-linkage")
         git_branch = st.text_input("Git branch", value="main")
         git_commit = st.text_input("Git commit, tag, or artifact ID", value="v0.1-demo")
-        code_path = st.text_input("Code path in repository", value="jobs/ctot_pprl_linkage_job.py")
-        execution_reason = st.text_area(
-            "Reason for code execution request",
+        code_path = st.text_input("Code entrypoint path", value="jobs/state_statistical_linkage_job.py")
+        code_details = st.text_area(
+            "Code request details",
             value=(
-                "Request approval to run the submitted analytics code against approved state data in the "
-                "state-controlled environment. The researcher requests only approved "
-                "pseudonymous linkage outputs, match quality metrics, and aggregate summaries."
+                "Code standardizes shared state dataset keys, runs linkage, creates linked analytical output, "
+                "and applies optional PPRL/PPRS controls only if restricted identifiers are present."
             ),
-            height=120,
+            height=90,
         )
-        requested_outputs = st.multiselect(
-            "Requested release outputs",
-            [
-                "aggregate outcome tables",
-                "match quality summary",
-                "pseudonymous linked IDs",
-                "match confidence scores",
-                "dashboard-ready CSV tables",
-                "owner-only review file",
-            ],
-            default=["aggregate outcome tables", "match quality summary", "dashboard-ready CSV tables"],
+        execution_context = st.text_area(
+            "Execution context",
+            value="Run in the app-controlled linkage workspace. Use direct public statistical linkage unless governance or restricted sensitivity requires PySyft-controlled execution.",
+            height=90,
         )
-        evidence_items = st.multiselect(
-            "Evidence included with submission",
-            [
-                "mock-data test results",
-                "schema and metadata mapping",
-                "repository test results",
-                "analysis logic summary",
-                "dependency list",
-                "output schema",
-                "disclosure-control plan",
-            ],
-            default=[
-                "mock-data test results",
-                "repository test results",
-                "analysis logic summary",
-                "output schema",
-                "disclosure-control plan",
-            ],
+        output_policy = st.text_area(
+            "Output policy",
+            value="Linked output remains in the separate Linkage tab. Request / Approval records only the State Owner decision and review notes.",
+            height=90,
         )
-        no_raw_data = st.checkbox("Researcher will not receive raw restricted rows or direct identifiers.", value=True)
-        owner_controls_keys = st.checkbox("State owner controls private inputs and execution settings.", value=True)
-        output_review = st.checkbox("All outputs require state-owner disclosure review before release.", value=True)
+        reviewer_notes = st.text_area(
+            "Reviewer notes / request details",
+            value="Please review the dataset asset, code asset, execution context, and output policy for this state dataset linkage run.",
+            height=90,
+        )
         submitted = st.form_submit_button("Submit request and code", type="primary")
 
     approval_request = {
-        "request_type": "researcher_code_submission_approval",
+        "request_type": "pysyft_style_code_request",
         "request_status": "submitted_for_state_owner_review" if st.session_state.approval_request else "draft",
         "submitted_by_user": user_context["username"],
-        "researcher": {
-            "name": researcher_name,
-            "organization": researcher_org,
-        },
-        "reviewer": state_owner,
-        "project_title": project_title,
+        "request_title": request_title,
         "dataset_source": settings.data_source,
         "dataset_pair": f"{left_name} + {right_name}",
         "left_dataset": left_name,
@@ -1464,30 +1503,36 @@ def approval_request_tab(settings: LinkageSettings, user_context: dict[str, str]
         "left_classification": settings.left_classification,
         "right_classification": settings.right_classification,
         "classification": classification,
+        "requested_linkage_method": settings.pprl_technique,
+        "auto_match_threshold": settings.auto_threshold,
+        "review_threshold": settings.review_threshold,
+        "ai_enhancement_requested": settings.use_ai,
+        "dataset_details": dataset_details,
+        "pysyft_request": {
+            "data_asset": dataset_details,
+            "code_asset": code_package_name,
+            "execution_context": execution_context,
+            "output_policy": output_policy,
+            "review_notes": reviewer_notes,
+        },
         "code_package": {
             "name": code_package_name,
             "git_repository_url": git_repository_url,
             "git_branch": git_branch,
             "git_commit_or_artifact_id": git_commit,
             "code_path": code_path,
+            "code_details": code_details,
         },
-        "execution_request": execution_reason,
-        "requested_release_outputs": requested_outputs,
-        "submission_evidence": evidence_items,
-        "researcher_attestations": {
-            "no_raw_restricted_data_requested": no_raw_data,
-            "state_owner_controls_keys_and_inputs": owner_controls_keys,
-            "outputs_require_owner_review": output_review,
-        },
+        "execution_context": execution_context,
+        "output_policy": output_policy,
+        "request_details": reviewer_notes,
         "review_decision_options": ["approve", "request_changes", "reject"],
         "owner_review_checks": [
-            "approved research purpose",
-            "approved datasets and fields only",
-            "no raw identifier output",
-            "owner-selected linkage method reviewed",
-            "match-quality and disclosure risks reviewed",
-            "small-cell and re-identification controls reviewed",
-            "release outputs match approved schema",
+            "data asset reviewed",
+            "code asset reviewed",
+            "execution context reviewed",
+            "output policy reviewed",
+            "review notes reviewed",
         ],
     }
 
@@ -1497,33 +1542,50 @@ def approval_request_tab(settings: LinkageSettings, user_context: dict[str, str]
         st.session_state.review_decision = {}
         st.success("Request and Git link submitted for State Owner review.")
 
-    st.subheader("Submitted request preview")
+    st.subheader("Submitted Request Summary For State Owner Review")
     current_request = st.session_state.approval_request or approval_request
-    preview_request = {
-        key: value
-        for key, value in current_request.items()
-        if key not in {"review_decision_options", "owner_review_checks"}
-    }
-    st.json(preview_request)
-    st.download_button(
-        "Download approval request JSON",
-        json.dumps(preview_request, indent=2),
-        "researcher_code_approval_request.json",
-        "application/json",
+    current_code_package = current_request.get("code_package", {})
+    st.dataframe(
+        pd.DataFrame(
+            [
+                ["Status", current_request.get("request_status", "draft")],
+                ["Request title", current_request.get("request_title", "")],
+                ["Dataset pair", current_request.get("dataset_pair", "")],
+                ["Requested linkage method", current_request.get("requested_linkage_method", "")],
+                ["Data asset / dataset details", current_request.get("dataset_details", "")],
+                ["Code package", current_code_package.get("name", "")],
+                ["Git repository", current_code_package.get("git_repository_url", "")],
+                ["Branch", current_code_package.get("git_branch", "")],
+                ["Commit / artifact", current_code_package.get("git_commit_or_artifact_id", "")],
+                ["Code entrypoint path", current_code_package.get("code_path", "")],
+                ["Execution context", current_request.get("execution_context", "")],
+                ["Output policy", current_request.get("output_policy", "")],
+            ],
+            columns=["Item", "Value"],
+        ),
+        hide_index=True,
+        width="stretch",
     )
 
     if st.session_state.review_decision:
-        st.subheader("Latest State Owner decision")
-        st.json(st.session_state.review_decision)
+        st.subheader("Latest State Owner Review Decision")
+        st.dataframe(
+            pd.DataFrame(
+                list(st.session_state.review_decision.items()),
+                columns=["Item", "Value"],
+            ),
+            hide_index=True,
+            width="stretch",
+        )
 
 
 def state_owner_review_tab(user_context: dict[str, str]) -> None:
-    st.header("Review Submitted Request")
+    st.header("State Owner Request Review And Approval")
     st.markdown(
         """
         <div class="callout">
         State Owners use this page to review BrightQuery submissions. Review the request, inspect the Git link and code package,
-        record a decision, and add reviewer notes before any restricted-data execution is approved.
+        record a decision, and add reviewer notes before governed execution or restricted output release.
         </div>
         """,
         unsafe_allow_html=True,
@@ -1539,11 +1601,10 @@ def state_owner_review_tab(user_context: dict[str, str]) -> None:
         [
             ["Status", approval_request.get("request_status", "draft")],
             ["Submitted by", approval_request.get("submitted_by_user", "")],
-            ["Researcher", approval_request.get("researcher", {}).get("name", "")],
-            ["Organization", approval_request.get("researcher", {}).get("organization", "")],
-            ["Project", approval_request.get("project_title", "")],
+            ["Request title", approval_request.get("request_title", approval_request.get("project_title", ""))],
             ["Dataset pair", approval_request.get("dataset_pair", "")],
             ["Classification", approval_request.get("classification", "")],
+            ["Requested linkage method", approval_request.get("requested_linkage_method", "")],
             ["Code package", code_package.get("name", "")],
             ["Git repository", code_package.get("git_repository_url", "")],
             ["Branch", code_package.get("git_branch", "")],
@@ -1553,27 +1614,30 @@ def state_owner_review_tab(user_context: dict[str, str]) -> None:
         columns=["Field", "Value"],
     )
 
-    st.subheader("Request summary")
+    st.subheader("Submitted Request, Dataset, Method, And Code Summary")
     st.dataframe(request_summary, hide_index=True, width="stretch")
 
-    st.subheader("Execution request")
-    st.write(approval_request.get("execution_request", ""))
+    st.subheader("Submitted Dataset Asset Details")
+    st.write(approval_request.get("dataset_details", ""))
 
-    st.subheader("Requested release outputs")
+    pysyft_request = approval_request.get("pysyft_request", {})
+    st.subheader("PySyft-Style Request Packet Details")
     st.dataframe(
-        pd.DataFrame([[item] for item in approval_request.get("requested_release_outputs", [])], columns=["Output"]),
+        pd.DataFrame(
+            [
+                ["Data asset", pysyft_request.get("data_asset", approval_request.get("dataset_details", ""))],
+                ["Code asset", pysyft_request.get("code_asset", code_package.get("name", ""))],
+                ["Execution context", pysyft_request.get("execution_context", approval_request.get("execution_context", ""))],
+                ["Output policy", pysyft_request.get("output_policy", approval_request.get("output_policy", ""))],
+                ["Review notes", pysyft_request.get("review_notes", approval_request.get("request_details", ""))],
+            ],
+            columns=["Section", "Details"],
+        ),
         hide_index=True,
         width="stretch",
     )
 
-    st.subheader("Evidence included")
-    st.dataframe(
-        pd.DataFrame([[item] for item in approval_request.get("submission_evidence", [])], columns=["Evidence"]),
-        hide_index=True,
-        width="stretch",
-    )
-
-    st.subheader("Code package for review")
+    st.subheader("Git Repository And Code Package Details For Review")
     git_url = str(code_package.get("git_repository_url", "")).strip()
     st.dataframe(
         pd.DataFrame(
@@ -1581,7 +1645,8 @@ def state_owner_review_tab(user_context: dict[str, str]) -> None:
                 ["Repository", git_url],
                 ["Branch", code_package.get("git_branch", "")],
                 ["Commit / artifact", code_package.get("git_commit_or_artifact_id", "")],
-                ["Code path", code_package.get("code_path", "")],
+                ["Code entrypoint path", code_package.get("code_path", "")],
+                ["Code details", code_package.get("code_details", "")],
             ],
             columns=["Item", "Value"],
         ),
@@ -1591,28 +1656,16 @@ def state_owner_review_tab(user_context: dict[str, str]) -> None:
     if git_url.startswith(("http://", "https://")):
         st.link_button("Open Git repository", git_url)
 
-    st.subheader("Reviewer checklist")
+    st.subheader("State Owner Reviewer Checklist")
     review_checks = approval_request.get("owner_review_checks", [])
     st.dataframe(pd.DataFrame([[check] for check in review_checks], columns=["Review check"]), hide_index=True, width="stretch")
 
     with st.form("state_owner_review_form"):
-        st.subheader("Decision")
+        st.subheader("State Owner Approval Decision")
         decision = st.selectbox("Review decision", ["approve", "request_changes", "reject"])
-        approved_outputs = st.multiselect(
-            "Approved outputs",
-            [
-                "aggregate outcome tables",
-                "match quality summary",
-                "pseudonymous linked IDs",
-                "match confidence scores",
-                "dashboard-ready CSV tables",
-                "owner-only review file",
-            ],
-            default=approval_request.get("requested_release_outputs", []),
-        )
         reviewer_notes = st.text_area(
             "Reviewer notes",
-            value="Reviewed submitted request, code package, requested outputs, and disclosure controls.",
+            value="Reviewed dataset selection, submitted code location, and request details.",
             height=120,
         )
         save_decision = st.form_submit_button("Save State Owner decision", type="primary")
@@ -1621,7 +1674,6 @@ def state_owner_review_tab(user_context: dict[str, str]) -> None:
         decision_record = {
             "reviewed_by": user_context["username"],
             "decision": decision,
-            "approved_outputs": approved_outputs,
             "reviewer_notes": reviewer_notes,
         }
         st.session_state.review_decision = decision_record
@@ -1634,80 +1686,135 @@ def state_owner_review_tab(user_context: dict[str, str]) -> None:
         st.rerun()
 
     if st.session_state.review_decision:
-        st.subheader("Saved decision")
-        st.json(st.session_state.review_decision)
+        st.subheader("Saved State Owner Decision Record")
+        st.dataframe(
+            pd.DataFrame(
+                list(st.session_state.review_decision.items()),
+                columns=["Item", "Value"],
+            ),
+            hide_index=True,
+            width="stretch",
+        )
 
 
 def settings_from_request(approval_request: dict[str, Any]) -> LinkageSettings:
-    left_classification = str(approval_request.get("left_classification", "restricted"))
+    left_classification = str(approval_request.get("left_classification", "public"))
     right_classification = str(approval_request.get("right_classification", "public"))
     return LinkageSettings(
         data_source=str(approval_request.get("dataset_source", "Mock datasets")),
-        left_dataset=str(approval_request.get("left_dataset", "Private education records")),
-        right_dataset=str(approval_request.get("right_dataset", "Public O*NET skill scores")),
+        left_dataset=str(approval_request.get("left_dataset", "Public LEHD workforce statistics")),
+        right_dataset=str(approval_request.get("right_dataset", "Public CPS labor force sample")),
         left_classification=left_classification,
         right_classification=right_classification,
-        pprl_technique=default_internal_linkage_method(left_classification, right_classification),
+        pprl_technique=str(
+            approval_request.get(
+                "requested_linkage_method",
+                default_internal_linkage_method(left_classification, right_classification),
+            )
+        ),
         salt="demo-controlled-salt",
-        auto_threshold=0.86,
-        review_threshold=0.72,
-        use_ai=False,
+        auto_threshold=float(approval_request.get("auto_match_threshold", 0.86)),
+        review_threshold=float(approval_request.get("review_threshold", 0.72)),
+        use_ai=bool(approval_request.get("ai_enhancement_requested", False)),
         ai_model=streamlit_secret("OPENAI_MODEL", "gpt-4.1-mini"),
     )
 
 
-def developer_results_tab() -> None:
-    st.header("Results")
-    approval_request = st.session_state.approval_request
-    if not approval_request:
-        st.info("Submit a request first. Results will be available after State Owner approval.")
-        return
-
-    decision = approval_request.get("owner_review", {}).get("decision")
-    st.subheader("Request status")
-    st.json(
-        {
-            "request_status": approval_request.get("request_status"),
-            "project_title": approval_request.get("project_title"),
-            "dataset_pair": approval_request.get("dataset_pair"),
-            "state_owner_decision": decision or "pending review",
-        }
-    )
-
-    if decision != "approve":
-        st.info("Results are locked until the State Owner approves this request.")
-        return
-
-    settings = settings_from_request(approval_request)
-    linked, summary, note = run_linkage(settings)
-    linked_view = linked_record_view(linked)
-    st.success("State Owner approved. Approved results are available below.")
-    st.subheader("Approved linked records")
-    st.dataframe(linked_view, hide_index=True, width="stretch")
-    st.download_button("Download approved linked records", linked_view.to_csv(index=False), "approved_linked_records.csv", "text/csv")
-
-    if summary is not None:
-        st.subheader("Approved aggregate summary")
-        st.dataframe(summary, hide_index=True, width="stretch")
-        st.download_button("Download approved summary", summary.to_csv(index=False), "approved_linked_summary.csv", "text/csv")
-
-
-def state_owner_linkage_tab() -> None:
-    st.header("Run Linkage")
+def developer_linkage_tab() -> None:
+    st.header("Developer Dataset Linkage Workspace")
     st.markdown(
         """
         <div class="callout">
-        State Owners can run any available linkage path here: direct public linkage, mixed private/public linkage,
-        LLM-assisted metadata planning, PPRL, secure enclave, honest broker, SMC, or asymmetric-key workflows.
+        Developers can link state datasets from this tab. Public/non-restricted statistical linkage is the
+        primary path; restricted outputs still follow State Owner review and approval.
         </div>
         """,
         unsafe_allow_html=True,
     )
-    settings = request_settings_controls()
+    settings = request_settings_controls(show_linkage_method=True, key_prefix="developer_linkage")
     left_name, left, right_name, right = selected_datasets(settings)
     classification = classify_pair(left_name, right_name, settings.left_classification, settings.right_classification)
 
-    st.subheader("Owner-selected linkage setup")
+    st.subheader("Selected Dataset Pair, Linkage Method, And Run Settings")
+    st.dataframe(
+        pd.DataFrame(
+            [
+                ["Dataset pair", f"{left_name} + {right_name}"],
+                ["Classification", classification],
+                ["Linkage method", settings.pprl_technique],
+                ["AI enhancement", "On - metadata only" if settings.use_ai else "Off"],
+            ],
+            columns=["Item", "Value"],
+        ),
+        hide_index=True,
+        width="stretch",
+    )
+
+    if left.empty or right.empty:
+        st.warning("Upload two CSV files or switch to mock datasets before running linkage.")
+        return
+
+    if st.button("Run linkage", type="primary", key="developer_run_linkage_button"):
+        st.session_state.developer_linkage_run = True
+
+    if not st.session_state.get("developer_linkage_run", False):
+        st.info("Choose datasets and a linkage method, then run linkage.")
+        return
+
+    results_tab(settings)
+
+
+def developer_results_tab() -> None:
+    st.header("Developer Request Status And State Owner Approval")
+    approval_request = st.session_state.approval_request
+    if not approval_request:
+        st.info("Submit a request first. Approval status will appear here.")
+        return
+
+    decision = approval_request.get("owner_review", {}).get("decision")
+    code_package = approval_request.get("code_package", {})
+    st.subheader("Submitted Request Status And Review Outcome")
+    st.dataframe(
+        pd.DataFrame(
+            [
+                ["Request status", approval_request.get("request_status")],
+                ["Request title", approval_request.get("request_title", approval_request.get("project_title"))],
+                ["Dataset pair", approval_request.get("dataset_pair")],
+                ["Linkage method", approval_request.get("requested_linkage_method")],
+                ["Git repository", code_package.get("git_repository_url", "")],
+                ["Code path", code_package.get("code_path", "")],
+                ["State Owner decision", decision or "pending review"],
+            ],
+            columns=["Item", "Value"],
+        ),
+        hide_index=True,
+        width="stretch",
+    )
+
+    if decision != "approve":
+        st.info("Request is pending State Owner approval. Linked output remains separate in the Linkage tab.")
+        return
+
+    st.success("Request approved. Run and review linked output in the separate Linkage tab.")
+
+
+def state_owner_linkage_tab() -> None:
+    st.header("State Owner Dataset Linkage Workspace")
+    st.markdown(
+        """
+        <div class="callout">
+        State Owners can run the full state dataset linkage flow here. Direct public statistical linkage is the
+        main path; PySyft governance, PPRL/PPRS encryption, secure enclave, honest broker, SMC, or asymmetric-key
+        workflows are available when sensitivity requires them.
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    settings = request_settings_controls(key_prefix="owner_linkage")
+    left_name, left, right_name, right = selected_datasets(settings)
+    classification = classify_pair(left_name, right_name, settings.left_classification, settings.right_classification)
+
+    st.subheader("State Owner Selected Dataset Pair, Method, And Run Settings")
     st.dataframe(
         pd.DataFrame(
             [
@@ -1733,7 +1840,7 @@ def state_owner_linkage_tab() -> None:
 
 
 def results_tab(settings: LinkageSettings) -> None:
-    st.header("Linked Output")
+    st.header("State Linkage Results From Selected Datasets")
     left_name, left, right_name, right = selected_datasets(settings)
     classification = classify_pair(left_name, right_name, settings.left_classification, settings.right_classification)
 
@@ -1743,22 +1850,118 @@ def results_tab(settings: LinkageSettings) -> None:
 
     linked, summary, note = run_linkage(settings)
     linked_view = linked_record_view(linked)
-    st.success(note)
+    st.success(f"State linkage complete. {note}")
     if settings.use_ai and st.session_state.ai_suggestion:
         with st.expander("AI metadata linkage plan", expanded=False):
-            st.code(st.session_state.ai_suggestion, language="json")
-    st.subheader("Linked cross-reference records")
+            ai_plan = parse_ai_plan(st.session_state.ai_suggestion)
+            if ai_plan:
+                st.dataframe(summary_frame(ai_plan, "Plan area", "Recommendation"), hide_index=True, width="stretch")
+            else:
+                st.write(st.session_state.ai_suggestion)
+    st.subheader("State Linked Record Output Table")
     st.dataframe(linked_view, hide_index=True, width="stretch")
-    st.download_button("Download linked records", linked_view.to_csv(index=False), "linked_records.csv", "text/csv")
+    st.download_button("Download state linked record output", linked_view.to_csv(index=False), "state_linked_record_output.csv", "text/csv")
 
     if summary is not None:
-        st.subheader("Released aggregate summary")
+        st.subheader("State Aggregate Summary And Match Metrics")
         st.dataframe(summary, hide_index=True, width="stretch")
-        st.download_button("Download summary", summary.to_csv(index=False), "linked_summary.csv", "text/csv")
+        st.download_button("Download state aggregate summary", summary.to_csv(index=False), "state_aggregate_summary.csv", "text/csv")
+
+
+def linkage_method_info_tab() -> None:
+    st.header("Detailed Linkage Method Information And Selection Guide")
+    st.markdown(
+        """
+        <div class="callout">
+        Use this tab to choose the right linkage approach. The main requirement is linking state datasets.
+        Start with direct public statistical linkage for non-restricted data. Add PySyft-style governance,
+        PPRL/PPRS encryption, or stronger controlled-execution methods only when sensitivity requires them.
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.subheader("1. Detailed Linkage Method Guide And Privacy Notes")
+    st.dataframe(
+        pd.DataFrame(
+            [
+                [
+                    "Direct public key linkage",
+                    "Joins public/non-restricted statistical datasets using shared keys such as state, county, year, SOC, CIP, NAICS, program, or geography.",
+                    "Default method for public state statistical data.",
+                    "No encryption needed when data is public and approved for direct matching.",
+                ],
+                [
+                    "LLM-assisted metadata planning",
+                    "Reviews schema names and metadata to suggest keys, blocking fields, risks, and output structure.",
+                    "Helpful for unfamiliar CSVs or early planning.",
+                    "Send metadata only; do not send raw private rows or identifiers.",
+                ],
+                [
+                    "PPRL/PPRS Bloom filter / hash embeddings",
+                    "Converts sensitive identifiers into encoded comparison structures before matching.",
+                    "Restricted person-level linkage where fuzzy matching is needed.",
+                    "Raw identifiers stay protected; encoded tokens are compared.",
+                ],
+                [
+                    "PPRL/PPRS salted hash + q-grams",
+                    "Uses owner-controlled salts and tokenized text fragments for approximate matching.",
+                    "Restricted names, dates, addresses, or IDs with spelling variation.",
+                    "Salt and tokenization rules should be controlled by the State Owner.",
+                ],
+                [
+                    "Secure Multi-Party Computation (SMC)",
+                    "Lets parties evaluate matching logic jointly without exposing private inputs.",
+                    "High-assurance multi-agency restricted linkage.",
+                    "Strong privacy model with higher implementation complexity.",
+                ],
+                [
+                    "Linkage Honest Broker (LHB)",
+                    "A trusted broker receives approved tokens and returns cross-reference IDs.",
+                    "Programs where a neutral linkage agent is acceptable.",
+                    "Requires broker governance, contracts, and audit controls.",
+                ],
+                [
+                    "Asymmetric key cryptography",
+                    "Uses public/private keys so sites do not rely on one shared secret.",
+                    "Multi-party settings with separate local key ownership.",
+                    "Useful for key rotation and party-specific control.",
+                ],
+                [
+                    "Secure enclave / eyes-off execution",
+                    "Runs linkage in an owner-controlled workspace where raw restricted data is not visible to developers.",
+                    "Restricted data requiring strong code-to-data execution controls.",
+                    "State Owner reviews outputs before release.",
+                ],
+            ],
+            columns=["Method", "What it does", "Best fit", "Privacy note"],
+        ),
+        hide_index=True,
+        width="stretch",
+    )
+
+    st.subheader("2. Recommended Linkage Approach By Data Type And Sensitivity")
+    st.dataframe(
+        pd.DataFrame(
+            [
+                ["Public/non-restricted statistical data", "Direct public key linkage", "Link directly in the Linkage tab and review State Linkage Results."],
+                ["Public data with unclear schemas", "Direct linkage plus optional LLM metadata planning", "Use AI only on metadata to identify safe keys."],
+                ["Mixed public/restricted data", "Public keys plus pseudonymized private references", "Keep private identifiers masked and release aggregate or pseudonymous outputs."],
+                ["Restricted person-level data", "PPRL/PPRS plus PySyft-style governance", "Submit request, review code, run controlled execution, and release only approved outputs."],
+                ["Multi-agency restricted data", "SMC, honest broker, asymmetric keys, or secure enclave", "Use stronger governance when raw data cannot move between parties."],
+            ],
+            columns=["Data situation", "Recommended approach", "Client note"],
+        ),
+        hide_index=True,
+        width="stretch",
+    )
+
+    st.subheader("3. PySyft-Style Governance Role In Request, Execution, And Release")
+    st.dataframe(pysyft_methodology_table(), hide_index=True, width="stretch")
 
 
 def main() -> None:
-    st.set_page_config(page_title="State Dataset Linkage Tool", page_icon=":material/hub:", layout="wide")
+    st.set_page_config(page_title="Data Access and Linkage Tool", page_icon=":material/hub:", layout="wide")
     init_state()
     style_page()
     user_context = login_panel()
@@ -1766,29 +1969,29 @@ def main() -> None:
         return
 
     if user_context["role"] == "Developer / BrightQuery":
-        st.title("BrightQuery Developer Portal")
-        st.caption("Submit request forms with Git links and view approved results.")
-        request, results = st.tabs(["Request", "Results"])
+        st.title("BrightQuery Developer Portal For Dataset Linkage Requests")
+        st.caption("Run dataset linkage separately from request submission and State Owner approval.")
+        linkage, info, request, request_approval = st.tabs(["Linkage", "Info", "Request", "Request / Approval"])
+        with linkage:
+            developer_linkage_tab()
+        with info:
+            linkage_method_info_tab()
         with request:
-            settings = request_settings_controls(show_linkage_method=False)
+            settings = request_settings_controls(show_linkage_method=True, key_prefix="developer_request")
             approval_request_tab(settings, user_context)
-        with results:
+        with request_approval:
             developer_results_tab()
         return
 
-    st.title("State Owner Review Portal")
-    st.caption("Review BrightQuery requests and run any available linkage method.")
-    review, run_linkage_tab, request_json = st.tabs(["Review Requests", "Run Linkage", "Request JSON"])
-    with review:
-        state_owner_review_tab(user_context)
-    with run_linkage_tab:
+    st.title("State Owner Portal For Linkage Review, Approval, And Execution")
+    st.caption("Run state linkage separately from request review and approval decisions.")
+    linkage, info, request_approval = st.tabs(["Linkage", "Info", "Request / Approval"])
+    with linkage:
         state_owner_linkage_tab()
-    with request_json:
-        st.header("Submitted Request JSON")
-        if st.session_state.approval_request:
-            st.json(st.session_state.approval_request)
-        else:
-            st.info("No request has been submitted yet.")
+    with info:
+        linkage_method_info_tab()
+    with request_approval:
+        state_owner_review_tab(user_context)
 
 
 if __name__ == "__main__":

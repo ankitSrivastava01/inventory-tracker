@@ -1,15 +1,15 @@
-# Linkage Tool Flow Using PySyft and PPRL
+# State Dataset Linkage Tool Flow Using PySyft and PPRL/PPRS When Needed
 
-Tool to link state datasets for analysis. Supports both non-restricted public statistical data and restricted private data.
+Tool to link state datasets for analysis. The main requirement is non-restricted public statistical linkage. PySyft governance and PPRL/PPRS encryption are optional controls when policy or restricted data sensitivity requires them.
 
 ## Purpose
 
-This flow describes how a linkage tool can support state dataset integration while separating public statistical linkage from restricted person-level linkage.
+This flow describes how a linkage tool can support state dataset integration. Public statistical linkage is the primary path; restricted person-level linkage is a secondary path only when needed.
 
 The core distinction is:
 
-- **Non-restricted / public statistical data** can often be linked directly using shared public keys and standardized fields.
-- **Restricted / private data** should use privacy-preserving record linkage, secure execution, state-owner approval, and disclosure-controlled output release.
+- **Non-restricted / public statistical data** should be linked directly using shared public keys and standardized fields.
+- **Restricted / private data** can use privacy-preserving record linkage, PPRL/PPRS-style encryption, secure execution, state-owner approval, and disclosure-controlled output release when needed.
 
 ## 1. Data Sources
 
@@ -50,8 +50,8 @@ Classification questions:
 - Is the data restricted / private?
 - Does it include person-level records?
 - Does it include direct or indirect identifiers?
-- Is PPRL required?
-- Is PySyft required for governed execution?
+- Is PPRL/PPRS encryption required, or can the dataset link directly?
+- Is PySyft required for governed execution, or is direct public statistical linkage sufficient?
 
 ## Data Type Decision
 
@@ -69,7 +69,7 @@ Data Type?
     |
     +--> Flow A: Non-Restricted / Public Statistical Data
     |
-    +--> Flow B: Restricted / Private Data Using PPRL + PySyft
+    +--> Flow B: Restricted / Private Data Using PPRL/PPRS + PySyft When Needed
 ```
 
 ## Flow A: Non-Restricted / Public Statistical Data
@@ -115,9 +115,9 @@ Allowed outputs may include:
 - cross-state comparisons
 - program outcomes
 
-## Flow B: Restricted / Private Data Using PPRL + PySyft
+## Flow B: Restricted / Private Data Using PPRL/PPRS + PySyft When Needed
 
-Use this path when data is restricted, private, person-level, or includes identifiers.
+Use this path only when data is restricted, private, person-level, or includes identifiers that cannot be linked directly.
 
 ### B1. Access Request
 
@@ -156,7 +156,7 @@ If approved, the state owner provides development materials such as:
 - mock data
 - proxy data
 
-These materials support development and testing without exposing private records.
+These materials support development and testing without exposing restricted records when restricted data is in scope.
 
 ## Important PySyft Boundary
 
@@ -187,7 +187,7 @@ PySyft should be treated as the governed workflow layer around the PPRL and anal
 | --- | --- | --- | --- |
 | 1 | Intake request | Researcher | Submit purpose, datasets, fields, linkage goal, and requested outputs. |
 | 2 | Metadata approval | State owner | Approve data dictionary, schema, ERD, mock data shape, and disclosure rules. |
-| 3 | Mock-data development | Researcher | Build and test PPRL plus analytics code without touching raw private records. |
+| 3 | Linkage development | Researcher | Build and test direct public statistical linkage first; add PPRL/PPRS encryption only when restricted identifiers require it. |
 | 4 | Code submission | Researcher | Submit code, input/output contract, thresholds, privacy controls, and test evidence. |
 | 5 | Owner review | State owner | Review code for purpose fit, identifier handling, PPRL risk, and output safety. |
 | 6 | Code-to-data run | PySyft workspace | Run approved code near restricted data while keeping raw rows inaccessible. |
@@ -196,7 +196,7 @@ PySyft should be treated as the governed workflow layer around the PPRL and anal
 
 ### PySyft Governance Artifacts
 
-Each restricted-data job should preserve:
+Each governed or restricted-data job should preserve:
 
 - request record: purpose, datasets, fields, legal basis, expected outputs, and reviewer decisions
 - code package: versioned PPRL code, analytics code, dependency list, test plan, and mock-data validation evidence

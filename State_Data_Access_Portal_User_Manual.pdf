@@ -1,0 +1,1409 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [7 0 R 9 0 R 11 0 R 13 0 R 15 0 R 17 0 R 19 0 R] /Count 7 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier >>
+endobj
+6 0 obj
+<< /Length 3614 >>
+stream
+q
+0.86 0.88 0.90 rg
+54 758 504 3 re f
+Q
+BT
+/F2 20 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 742 Tm
+(Data Access and Linkage Tool User Manual) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 716 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 702 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 688 Tm
+(Version: 1.0) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 674 Tm
+(Date: July 13, 2026) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 660 Tm
+() Tj
+/F2 15 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 646 Tm
+(Purpose) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 624 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 610 Tm
+(The Data Access and Linkage Tool supports a two-role workflow for linking state datasets.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 596 Tm
+(The main requirement is public/non-restricted statistical linkage; restricted encrypted) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 582 Tm
+(linkage is optional when needed.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 568 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 554 Tm
+(The portal has two login roles:) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 540 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 526 Tm
+(- Developer / BrightQuery) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 512 Tm
+(- State Owner) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 498 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 484 Tm
+(Any user name is accepted in this demo. The selected role controls what the user can see.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 470 Tm
+() Tj
+/F2 15 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 456 Tm
+(Role Summary) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 434 Tm
+() Tj
+/F2 12 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 420 Tm
+(Developer / BrightQuery) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 402 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 388 Tm
+(The Developer / BrightQuery user can only see:) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 374 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 360 Tm
+(- Linkage) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 346 Tm
+(- Info) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 332 Tm
+(- Request) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 318 Tm
+(- Request / Approval) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 304 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 290 Tm
+(The developer runs linkage from the Linkage tab, uses Info to understand linkage methods,) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 276 Tm
+(and submits a PySyft-style data/code request from the Request tab. Request / Approval is) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 262 Tm
+(separate and shows only approval status and State Owner decision.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 248 Tm
+() Tj
+/F2 12 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 234 Tm
+(State Owner) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 216 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 202 Tm
+(The State Owner can:) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 188 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 174 Tm
+(- Review submitted requests) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 160 Tm
+(- Review Git repository and code package metadata) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 146 Tm
+(- Approve, request changes, or reject requests) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 132 Tm
+(- Run all available linkage methods) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 118 Tm
+(- Use Info to compare linkage methods) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 104 Tm
+(- View submitted request summaries) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 90 Tm
+() Tj
+/F2 15 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 76 Tm
+(Login) Tj
+/F1 9 Tf
+0.48 0.52 0.56 rg
+1 0 0 1 54 30 Tm
+(Data Access and Linkage Tool User Manual - Page 1 of 7) Tj
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 6 0 R >>
+endobj
+8 0 obj
+<< /Length 3703 >>
+stream
+BT
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 742 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 728 Tm
+(1. Open the Streamlit app.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 714 Tm
+(2. On the login page, choose a role.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 700 Tm
+(3. Enter any user name.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 686 Tm
+(4. Select Login.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 672 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 658 Tm
+(After login, the sidebar shows the signed-in user and role. Use Logout to return to the) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 644 Tm
+(login page.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 630 Tm
+() Tj
+/F2 15 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 616 Tm
+(Developer / BrightQuery Workflow) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 594 Tm
+() Tj
+/F2 12 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 580 Tm
+(Submit A Request) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 562 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 548 Tm
+(1. Login as Developer / BrightQuery.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 534 Tm
+(2. Open the Request tab.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 520 Tm
+(3. Choose the dataset source:) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 506 Tm
+(- Mock datasets) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 492 Tm
+(- Upload CSVs) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 478 Tm
+(4. If using mock data, choose a demo request scenario or custom pair.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 464 Tm
+(5. Choose the linkage method and thresholds for the request.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 450 Tm
+(6. If uploading CSVs, upload both files and classify each as public/non-restricted or) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 436 Tm
+(   restricted.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 422 Tm
+(7. Complete the PySyft-style request form:) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 408 Tm
+(- Request name) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 394 Tm
+(- Data asset / dataset details) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 380 Tm
+(- Code package name) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 366 Tm
+(- Git repository link) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 352 Tm
+(- Git branch) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 338 Tm
+(- Git commit, tag, or artifact ID) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 324 Tm
+(- Code entrypoint path) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 310 Tm
+(- Code request details) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 296 Tm
+(- Execution context) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 282 Tm
+(- Output policy) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 268 Tm
+(- Reviewer notes / request details) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 254 Tm
+(8. Select Submit request and code.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 240 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 226 Tm
+(The request is saved for State Owner review.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 212 Tm
+() Tj
+/F2 12 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 198 Tm
+(Developer Visibility Rules) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 180 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 166 Tm
+(The developer can see:) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 152 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 138 Tm
+(- Linkage method selector) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 124 Tm
+(- Match thresholds) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 110 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 96 Tm
+(The developer does not see:) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 82 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 68 Tm
+(- State Owner linkage controls) Tj
+/F1 9 Tf
+0.48 0.52 0.56 rg
+1 0 0 1 54 30 Tm
+(Data Access and Linkage Tool User Manual - Page 2 of 7) Tj
+ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Length 3738 >>
+stream
+BT
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 742 Tm
+(- State Owner approval controls) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 728 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 714 Tm
+(The developer sees linkage output in Linkage and approval status in Request / Approval.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 700 Tm
+() Tj
+/F2 12 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 686 Tm
+(Linkage) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 668 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 654 Tm
+(1. Open the Linkage tab.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 640 Tm
+(2. Choose the dataset source:) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 626 Tm
+(- Mock datasets) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 612 Tm
+(- Upload CSVs) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 598 Tm
+(3. Select the dataset pair.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 584 Tm
+(4. Choose the linkage method and thresholds.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 570 Tm
+(5. Select Run linkage.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 556 Tm
+(6. Review State Linkage Results, including linked record output and aggregate summaries.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 542 Tm
+() Tj
+/F2 12 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 528 Tm
+(Info) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 510 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 496 Tm
+(The Info tab explains which linkage method to use:) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 482 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 468 Tm
+(- Direct public key linkage for public/non-restricted state statistical data) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 454 Tm
+(- LLM-assisted metadata planning for unclear schemas) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 440 Tm
+(- PPRL/PPRS methods for restricted identifiers) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 426 Tm
+(- SMC, honest broker, asymmetric keys, or secure enclave for stronger multi-party controls) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 412 Tm
+(- PySyft-style governance for request, code review, controlled execution, and release) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 398 Tm
+(  review) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 384 Tm
+() Tj
+/F2 12 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 370 Tm
+(Request / Approval) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 352 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 338 Tm
+(1. Open the Request / Approval tab.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 324 Tm
+(2. Review request status.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 310 Tm
+(3. Review the State Owner decision.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 296 Tm
+(4. Use the separate Linkage tab to run or review linked output.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 282 Tm
+() Tj
+/F2 15 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 268 Tm
+(State Owner Workflow) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 246 Tm
+() Tj
+/F2 12 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 232 Tm
+(Review Submitted Requests) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 214 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 200 Tm
+(1. Login as State Owner.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 186 Tm
+(2. Open Request / Approval.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 172 Tm
+(3. Review the request summary:) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 158 Tm
+(- Status) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 144 Tm
+(- Submitted by) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 130 Tm
+(- Researcher) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 116 Tm
+(- Organization) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 102 Tm
+(- Project) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 88 Tm
+(- Dataset pair) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 74 Tm
+(- Classification) Tj
+/F1 9 Tf
+0.48 0.52 0.56 rg
+1 0 0 1 54 30 Tm
+(Data Access and Linkage Tool User Manual - Page 3 of 7) Tj
+ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 10 0 R >>
+endobj
+12 0 obj
+<< /Length 3940 >>
+stream
+BT
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 742 Tm
+(- Code package name) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 728 Tm
+(- Git repository) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 714 Tm
+(- Branch) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 700 Tm
+(- Commit or artifact) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 686 Tm
+(- Code path) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 672 Tm
+(4. Review the execution request.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 658 Tm
+(5. Review requested release outputs.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 644 Tm
+(6. Open the Git repository link if needed.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 630 Tm
+(7. Review the checklist.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 616 Tm
+(8. Choose one decision:) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 602 Tm
+(- approve) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 588 Tm
+(- request_changes) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 574 Tm
+(- reject) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 560 Tm
+(9. Add reviewer notes.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 546 Tm
+(10. Save the State Owner decision.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 532 Tm
+() Tj
+/F2 12 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 518 Tm
+(Linkage) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 500 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 486 Tm
+(State Owners can run the state dataset linkage flow directly. Direct public statistical) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 472 Tm
+(linkage is the main path; encrypted methods are available only when sensitivity requires) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 458 Tm
+(them.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 444 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 430 Tm
+(1. Open Linkage.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 416 Tm
+(2. Choose dataset source:) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 402 Tm
+(- Mock datasets) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 388 Tm
+(- Upload CSVs) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 374 Tm
+(3. Select or upload datasets.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 360 Tm
+(4. Choose the linkage method:) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 346 Tm
+(- Direct public key linkage) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 332 Tm
+(- LLM-assisted linkage) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 318 Tm
+(- PPRL/PPRS Bloom filter / hash embeddings) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 304 Tm
+(- PPRL/PPRS salted hash + q-grams) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 290 Tm
+(- Secure Multi-Party Computation \(SMC\)) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 276 Tm
+(- Linkage Honest Broker \(LHB\)) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 262 Tm
+(- Asymmetric key cryptography) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 248 Tm
+(- PPRL/PPRS secure enclave / eyes-off execution) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 234 Tm
+(5. Set match thresholds when applicable.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 220 Tm
+(6. Enable AI enhancement if desired and configured.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 206 Tm
+(7. Select Run selected linkage.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 192 Tm
+(8. Review linked records and aggregate summaries.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 178 Tm
+(9. Download outputs if appropriate.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 164 Tm
+() Tj
+/F2 15 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 150 Tm
+(How The App Reflects A PySyft-Style Architecture) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 128 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 114 Tm
+(The app is designed as a state dataset linkage tool. PySyft-style governance can be used) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 100 Tm
+(when code-to-data review, audit, or controlled execution is required.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 86 Tm
+() Tj
+/F2 12 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 72 Tm
+(Architecture Mapping) Tj
+/F1 9 Tf
+0.48 0.52 0.56 rg
+1 0 0 1 54 30 Tm
+(Data Access and Linkage Tool User Manual - Page 4 of 7) Tj
+ET
+endstream
+endobj
+13 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 12 0 R >>
+endobj
+14 0 obj
+<< /Length 4650 >>
+stream
+BT
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 742 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 728 Tm
+(- Developer / BrightQuery represents the external researcher or developer.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 714 Tm
+(- State Owner represents the data owner and reviewer.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 700 Tm
+(- The Request tab represents the access request and code submission step.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 686 Tm
+(- The developer Linkage tab represents user-side dataset linkage.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 672 Tm
+(- The Git repository link represents the submitted code package.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 658 Tm
+(- Request / Approval represents request status and State Owner decision.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 644 Tm
+(- Linkage represents state dataset linkage execution and linked output.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 630 Tm
+(- Request summaries represent the audit record for request, review, and release.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 616 Tm
+() Tj
+/F2 12 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 602 Tm
+(PySyft-Style Boundary) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 584 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 570 Tm
+(In a PySyft-style architecture, public statistical data can be linked directly. If) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 556 Tm
+(restricted data is included, the developer should not directly access raw restricted data.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 542 Tm
+(Instead:) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 528 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 514 Tm
+(1. The developer prepares code in a Git repository.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 500 Tm
+(2. The developer submits a PySyft-style request with data asset, code asset, execution) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 486 Tm
+(   context, output policy, and review notes.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 472 Tm
+(3. The State Owner reviews the request and code package.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 458 Tm
+(4. The State Owner approves, rejects, or asks for changes.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 444 Tm
+(5. Approved code is run directly for public statistical data or in the controlled owner) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 430 Tm
+(   environment for restricted data.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 416 Tm
+(6. Request approval decisions are tracked separately from linkage output.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 402 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 388 Tm
+(This app reflects that pattern by keeping request submission, code review, linkage) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 374 Tm
+(execution, and result release as separate screens and responsibilities.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 360 Tm
+() Tj
+/F2 12 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 346 Tm
+(Developer Linkage Method Visibility) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 328 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 314 Tm
+(The developer can choose the requested linkage method in the Request tab. This keeps the) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 300 Tm
+(request complete while keeping the main focus on state dataset linkage:) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 286 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 272 Tm
+(- Developers describe the analytical need.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 258 Tm
+(- Developers provide the Git link to the code.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 244 Tm
+(- Developers select the requested linkage method and thresholds.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 230 Tm
+(- State Owners review the requested method when approval or governed execution is) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 216 Tm
+(  required.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 202 Tm
+(- State Owners control whether outputs are released.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 188 Tm
+() Tj
+/F2 15 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 174 Tm
+(How Developers Link Data Using The Same App) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 152 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 138 Tm
+(Developers use the same app to run linkage in the Linkage tab and separately submit a) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 124 Tm
+(PySyft-style data/code request for approval when approval is required.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 110 Tm
+() Tj
+/F2 12 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 96 Tm
+(Developer Steps) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 78 Tm
+() Tj
+/F1 9 Tf
+0.48 0.52 0.56 rg
+1 0 0 1 54 30 Tm
+(Data Access and Linkage Tool User Manual - Page 5 of 7) Tj
+ET
+endstream
+endobj
+15 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 14 0 R >>
+endobj
+16 0 obj
+<< /Length 4364 >>
+stream
+BT
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 742 Tm
+(1. Login as Developer / BrightQuery.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 728 Tm
+(2. Open Request.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 714 Tm
+(3. Select the dataset scope or upload public/request files for review.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 700 Tm
+(4. Choose the linkage method and thresholds. Use direct public linkage for non-restricted) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 686 Tm
+(   statistical datasets.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 672 Tm
+(5. Fill out the data asset, code asset, execution context, output policy, and review) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 658 Tm
+(   notes.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 644 Tm
+(6. Add the Git repository link, branch, commit or tag, and code path.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 630 Tm
+(7. Submit the request.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 616 Tm
+(8. Open Linkage to run the selected dataset linkage.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 602 Tm
+(9. Wait for State Owner approval only when governed execution or restricted release is) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 588 Tm
+(   required.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 574 Tm
+(10. Open Request / Approval after submission to review decision status.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 560 Tm
+() Tj
+/F2 12 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 546 Tm
+(What Happens After Submission) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 528 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 514 Tm
+(After the developer submits the request:) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 500 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 486 Tm
+(- The State Owner sees the request and Git code package metadata.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 472 Tm
+(- The State Owner reviews the data asset, code asset, execution context, output policy,) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 458 Tm
+(  and review notes.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 444 Tm
+(- The State Owner reviews the requested linkage method and can use Linkage for owner-) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 430 Tm
+(  controlled execution.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 416 Tm
+(- The State Owner records the request approval decision when review is required.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 402 Tm
+(- Linkage output remains in the separate Linkage tab.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 388 Tm
+() Tj
+/F2 12 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 374 Tm
+(Developer Outcome) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 356 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 342 Tm
+(From the developer perspective, the app provides a complete linkage workflow:) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 328 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 314 Tm
+(- Submit data linkage request) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 300 Tm
+(- Run linkage from the user-side Linkage tab) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 286 Tm
+(- Attach code through Git) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 272 Tm
+(- Track approval status) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 258 Tm
+(- Review approval status separately from linkage output) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 244 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 230 Tm
+(The developer can see the requested linkage method, while State Owner approval still) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 216 Tm
+(controls execution and release.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 202 Tm
+() Tj
+/F2 15 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 188 Tm
+(Output Controls) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 166 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 152 Tm
+(Public statistical outputs can be released directly when allowed. Restricted outputs should) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 138 Tm
+(remain privacy-safe. The app is designed to support:) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 124 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 110 Tm
+(- Pseudonymous IDs) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 96 Tm
+(- Aggregate summaries) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 82 Tm
+(- Match quality summaries) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 68 Tm
+(- Disclosure review before release) Tj
+/F1 9 Tf
+0.48 0.52 0.56 rg
+1 0 0 1 54 30 Tm
+(Data Access and Linkage Tool User Manual - Page 6 of 7) Tj
+ET
+endstream
+endobj
+17 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 16 0 R >>
+endobj
+18 0 obj
+<< /Length 2604 >>
+stream
+BT
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 742 Tm
+(- Suppression or withholding of unsafe outputs when required) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 728 Tm
+() Tj
+/F2 15 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 714 Tm
+(Optional AI Setup) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 692 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 678 Tm
+(AI enhancement is optional and metadata-only. It should not receive raw restricted rows or) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 664 Tm
+(direct identifiers.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 650 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 636 Tm
+(To enable AI, create .streamlit/secrets.toml:) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 622 Tm
+() Tj
+/F3 10 Tf
+0.20 0.24 0.28 rg
+1 0 0 1 54 608 Tm
+(OPENAI_API_KEY = "your-new-key") Tj
+/F3 10 Tf
+0.20 0.24 0.28 rg
+1 0 0 1 54 594 Tm
+(OPENAI_MODEL = "gpt-4.1-mini") Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 580 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 566 Tm
+(Then turn on Use AI to enhance linkage in the Linkage or Request page.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 552 Tm
+() Tj
+/F2 15 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 538 Tm
+(Troubleshooting) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 516 Tm
+() Tj
+/F2 12 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 502 Tm
+(No request is visible to the State Owner) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 484 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 470 Tm
+(Login as Developer / BrightQuery and submit a request first.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 456 Tm
+() Tj
+/F2 12 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 442 Tm
+(Developer results are locked) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 424 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 410 Tm
+(Login as State Owner and approve the request.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 396 Tm
+() Tj
+/F2 12 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 382 Tm
+(AI enhancement is unavailable) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 364 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 350 Tm
+(Check that OPENAI_API_KEY exists in Streamlit secrets and that dependencies are installed.) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 336 Tm
+() Tj
+/F2 12 Tf
+0.32 0.35 0.38 rg
+1 0 0 1 54 322 Tm
+(Uploaded CSVs do not link) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 304 Tm
+() Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 290 Tm
+(Confirm that both files have compatible shared fields or that the selected State Owner) Tj
+/F1 10 Tf
+0.27 0.31 0.35 rg
+1 0 0 1 54 276 Tm
+(linkage method is appropriate for the uploaded data.) Tj
+/F1 9 Tf
+0.48 0.52 0.56 rg
+1 0 0 1 54 30 Tm
+(Data Access and Linkage Tool User Manual - Page 7 of 7) Tj
+ET
+endstream
+endobj
+19 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R /F2 4 0 R /F3 5 0 R >> >> /Contents 18 0 R >>
+endobj
+xref
+0 20
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000156 00000 n 
+0000000226 00000 n 
+0000000301 00000 n 
+0000000369 00000 n 
+0000004035 00000 n 
+0000004181 00000 n 
+0000007936 00000 n 
+0000008082 00000 n 
+0000011873 00000 n 
+0000012021 00000 n 
+0000016014 00000 n 
+0000016162 00000 n 
+0000020865 00000 n 
+0000021013 00000 n 
+0000025430 00000 n 
+0000025578 00000 n 
+0000028235 00000 n 
+trailer
+<< /Size 20 /Root 1 0 R >>
+startxref
+28383
+%%EOF
